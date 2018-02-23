@@ -1,0 +1,45 @@
+#### FSharp Workshop plan
+
+
+  - Purpose: Help iQ developers switch to F# - the best language available for .NET. Show adventages of FP paradigm over OO.
+  - Paradigm: 
+      - Why FP is better paradigm than others, like OO? 
+  	    - See Bartosz Milewski's intro post
+  	    - Check [5 good reasons to move to F# video](https://www.youtube.com/watch?v=-0BB3lU_qr4)
+  	- Basics: 
+      - function signature
+      - currying, partial application ([1](https://youtu.be/-0BB3lU_qr4?t=455))
+      - pipelining (|>) 
+      - f. composition
+      - type system
+        - ADTs: record [1](https://youtu.be/-0BB3lU_qr4?t=623), discriminated union
+        - object expressions
+        - (class, interface)
+  	  - expression based:
+        - see: F# Deep Dive book (T.Petricek chapter) 
+        - [Expressions vs Statements in DevJoy post](http://www.devjoy.com/2014/12/decorating-immutable-christmas-trees/)
+      - type inference
+  	  - Pattern matching: match, let, active patterns
+      - exercises: [Bowling kata](https://github.com/artur-s/PlaygroundAndKatas/blob/3cf7fe2aac4dd307bc7a235a9e7401df4f5b0c3a/MiscProjects/src/MiscKatas/Bowling.fs)?
+      - also check the Why OO matters post for hard parts of expression-based langs
+  	- Auto-generalization: parametricity, 
+  	- Recursion and beyond:
+  		- Recursive types and functions and immutability [OCaml99](https://ocaml.org/learn/tutorials/99problems.html)
+  		- Tail recursion
+  		- Abstracting recursion: folds, catamorphism (Scott's blog)
+  	- (Easy does not mean simple. Rich Hickey: Simple made easy)
+  - Composability
+    - Effectful computations with computation expressions: `result`, `async`, `query` (, `cloud`)
+    - Dependency rejection
+  - DDD/ Domain modelling:
+  	- ADT, algebra on types, Better domain logic representation in type system : _Why F# system with ADTs is great for domain modelling?_
+  	- show [implementation of know CleanCode example in F#](https://functionalsoftware.net/fsharp-rewrite-of-a-fully-refactored-csharp-clean-code-example-612/) (find in notes), [DevJoy blog post](http://www.devjoy.com/2017/02/reading-f/)
+    - Scott's Modeling domain workshop from OpenFSharp
+  	- API -> DSL (with custom operators) - check Will Smith talk from OpenFSharp
+  - Best practices: 
+  	- explicit types on API level, implicit/type inference on implementation
+	- (...)
+  - (type providers, show CSV, EF or Swagger)
+  - Use #funprog channel for communication (to make it more alive)
+	- prepare questions to engage (conversations)
+  - feedback: google survey?
