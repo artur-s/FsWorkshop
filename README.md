@@ -23,6 +23,10 @@
       - exercises: [Bowling kata](https://github.com/artur-s/PlaygroundAndKatas/blob/3cf7fe2aac4dd307bc7a235a9e7401df4f5b0c3a/MiscProjects/src/MiscKatas/Bowling.fs)?
       - also check the Why OO matters post for hard parts of expression-based langs
   	- Auto-generalization: parametricity, 
+    - Asynchronous programming: 
+        - [MS Docs](https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/asynchronous-and-concurrent-programming/async), [Async F# vs C#](http://tomasp.net/blog/async-csharp-differences.aspx/), [C# async gotchas](http://tomasp.net/blog/csharp-async-gotchas.aspx/)
+        - F# async supports the implicit propagation of a cancellation token through the execution of an asynchronous computation. Cancellation is checked at (…), and before the execution of each return, `let!`, `use!`, `try/with`, `try/finally`, `do!` and `async { ... }` construct, and before each iteration of an asynchronous while or for loop. ([ref.](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/async-padl-revised-v2.pdf))
+        - ([Asynchronous sequences](http://tomasp.net/blog/async-sequences.aspx/) and [`FSharp.Control.Reactive`](http://fsprojects.github.io/FSharp.Control.Reactive/tutorial.html) as examples of F# async extensibility)
   	- Recursion and beyond:
   		- Recursive types and functions and immutability [OCaml99](https://ocaml.org/learn/tutorials/99problems.html)
   		- Tail recursion
