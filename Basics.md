@@ -98,5 +98,43 @@
       - printf "%i" <| 1+2       // using reverse pipe
       - let add x y = x + y
         1+2 |> add <| 3+4  
-
+    
+  - Function composition
+    - Supose the following functions
+      - let f (x:int) = float x * 3.0
+      - let g (x:float) = x > 5.0
+    - Then the following function takes the output of "f" and inputs it into "g".  
+      - let h (x:int) =
+          let y = f(x)
+          g(y)
+    - Or...  
+      - let h (x:int) = g ( f(x) )
+    - Additionlly, the two functions can be combined without declaring its signatures.  
+      - let compose f g x = g ( f(x) )
+    - And its signature:  
+      - let compose : ('a -> 'b) -> ('b -> 'c) -> 'a -> 'c    
+    - The actual definition of composition. 
+      - let (>>) f g x = g ( f(x) )
+    - Note: This is only possible because every function has one input and one output.
+    
+    - Example:  
+      - let add3 x = x + 3
+      - let multiply2 x = x * 2
+      - let add3Multiply2 x = (>>) add3 multiply2 x
+    - We can partially apply it
+      - let add3Multiply2 = (>>) add3 multiply2
+    - And since now its a binary operation
+      - let add3Multiply2 = add3 >> multiply2
+      - add3Multiply2 5
+    - Reverse composition
+      - let (<<) f g x = g ( f(x) )
+      - Used mainly to make code more like English
+      
+      - let aList = []
+      - aList |> List.isEmpty |> not
+      - aList |> (not << List.isEmpty)
+    
+  - Pipelining vs Function composition
+    - Pipelining -> The input to each function is the output of the previous function.
+    - Function composition -> It returns a function instead of immediately invoking the sequence.
         
