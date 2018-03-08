@@ -137,4 +137,98 @@
   - Pipelining vs Function composition
     - Pipelining -> The input to each function is the output of the previous function.
     - Function composition -> It returns a function instead of immediately invoking the sequence.
-        
+    
+  - Types
+    - They are used in two main ways:
+      * As compile time unit tests.
+      * As domains for functions to act upon. It is a sort of data modeling tool that allows to represent a real world domain in code.
+      * The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the “compile time unit tests” work. In the ideal scenario, if your program compiles, then it really is correct!
+    - All tpes definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
+      - type A = int
+      - type B = int * int
+      - type C = {FirstName:string; LastName:string}
+      - type D = Square of int | Rectangle of int * int
+      - type E<'a> = AChoice of 'a | OtherChoice of 'a * 'a 
+    - They can only be declared in namespaces or modules.
+    - Can't be declared inside functions.
+    
+    - Constructing types
+      - let a = 3
+      - let b = (6, 39)
+      - let c = {FirstName="Grzegorz"; LastName="Brzęczyszczykiewicz"
+      - let d = Rectangle (5, 6)
+      - let e = AChoice "this choice"
+    - Deconstructing types
+      - let (b1, b2) = (6, 39)
+      - let { FirstName = c1 } = c
+      - match d with
+        | Square d1 -> printf "Square with sides %i" d1
+        | Rectangle (d1, d2) -> printf "Rectangle with sides %i %i" d1 d2
+    
+    - Abbreviations or aliases
+      - type [name] = [existingType]
+      - type PaymentMethodId = int
+      - type CustomerId = Guid
+      - type CustomerPaymentMethod = PaymentMethodId * CustomerId
+      -They provide documentation.
+      -Decoupling between usage and the implementation of a type.
+      -Its not really a new type, just an alias.
+
+    - Tuples
+      -Imagine the Cartesian product of two collections. Each combination is expressed as (a1, b1), (a1, b2), ..., (a2, b1)
+      -Hence the type signature that they do.
+      - let tuple1 = (3, 9)             //Signature: int * int
+      - let tuple2 = ("Hola!", true)    //Signature: string * bool
+      - let tuple4 = ("Bob", 42, true)
+      - let tuple5 = 1, 2, 3            //Note that parenthesis doesn't matter.
+      - type PersonalPayment = Person * PaymentMethod
+      -Tuples are single objects.
+      -Order matters -> `int*bool` not the same as `bool*int`
+      -The comma is the most important of tuples.
+      - let t = 3, 6    //Constructing
+      - let t1, t2 = t  //Deconstructing
+      - let t1, _ = t   //Underscore means "whatever"
+      
+      - let t1 = fst t  //fst extracts the first element
+      - let t2 = snd t  //snd extracts the second element.
+      
+      -Tuples are equal if they have the same length and values in each slot.
+      - (1,2) = (1,2)             ?
+      - (1,2,3) = (1,3,2)         ?
+      - (1, (2,3), 4) = (1,2,3,4) ?
+      - (1,(2,3),4) = (1,2,(3,4)) ?
+      - (1,2) = (1,2,3)           ?
+      
+      -Printing
+      - printf "%s" t1.ToString()
+      - printf "%O" t1
+
+    - Records
+      -Records are tuples where each element is labeled.
+      - type Person = {firstName: string; lastName: string}
+      - let aPerson = {firstName = "Juan"; lastName: "Perez"}     //What are the differences?
+      
+      - let {firstName = fName; lastName = lName} = aPerson     //What is this?
+      - let {firstName = _; lastName = lName} = aPerson
+      
+      - let firstName = aPerson.firstName
+      - let lastName = aPerson.lastName
+      
+      -Order doesn't matter
+      - let bPerson = {lastName = "Perez"; firstName = "Juan"}
+      - aPerson = bPerson
+      
+      -Records might have same structure.
+      - let Customer = {firstName: string; lastName: string}
+      - let aDude = {firstName = "John"; lastName = "Johnson"}     //What type is aDude?
+      -To break ambiguity, add the type name to at least one of the labels.
+      - let aCustomer = {Customer.firstName="John", lastName="Johnson"}
+      
+      -Note that in F#, unlike some other functional languages, two types with exactly the same structural definition are not the same type. Two types are only equal if they have the same name.
+      
+      -With
+      - let aCustomerChild = {aCustomer with firstName="Little Johnny"}
+      
+      -Printing
+      - printfn "%A" aCustomer  //Nice representation
+      - printfn "%O" aCustomer  //Not nice
