@@ -4,8 +4,9 @@
   - Purpose: Help iQ developers switch to F# - the best language available for .NET. Show adventages of FP paradigm over OO.
   - Paradigm: 
       - Why FP is better paradigm than others, like OO? 
-  	    - See Bartosz Milewski's intro post
+  	    - See Bartosz Milewski's [intro post](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
   	    - Check [5 good reasons to move to F# video](https://www.youtube.com/watch?v=-0BB3lU_qr4)
+	    - [Is your language unresonable?](https://fsharpforfunandprofit.com/posts/is-your-language-unreasonable/#can-your-programming-language-do-this)
   	- Basics: 
       - function signature
       - currying, partial application ([1](https://youtu.be/-0BB3lU_qr4?t=455))
