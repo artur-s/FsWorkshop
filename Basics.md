@@ -232,3 +232,75 @@
       -Printing
       - printfn "%A" aCustomer  //Nice representation
       - printfn "%O" aCustomer  //Not nice
+      
+    - Discriminated Unions
+      -While tuples and records are types of multiplication, Discriminated Unions are types of addition.
+      -Each component is called *union case*, and each one contains a *case identifier* or *tag*. Each *tag* must start with upper case.
+      -Disciminated Unions are type safe, and data can only be accessed one way.
+      - type IntOrBool =    //IntOrBool is the sum of all Integer or Boolean
+        | Integer of int
+        | Boolean of bool 
+      - type IntOrBool = Integers of int | Booleans of bool   //Note: vertical bar is only option before the first component.
+      
+      - type AnyType =
+        | Customer of Customer       //Labels can have the same name of the component type. Common, used as documentation.
+        | ATuple of int * string
+        | AListOfIntOrBool of IntOrBool list    //Note: Custom types muust be pre-defined.
+        | AnEmptyCase     //No need for a type.
+        
+      -Construction
+      - let anInt = Integer 33
+      - let aBool = Boolean false
+      - let aCustomer = Customer {firstName = "Bob"; lastName = "Bobson"}
+      - let anEmptyCase = AnEmptyCase
+      - let aFewSquares = 
+          [1..5]
+          |> List.map Square
+      
+        -Naming conflicts
+        - type OtherIntOrBool = Integer of Int | Boolean of bool
+        - let aValue = Integer 3      //? which type is it?
+
+        - let otherValue = OtherIntOrBool.Integer 52
+        
+      -Deconstruction with *match*
+      - let intOrBool x =
+          match x wtih
+          | Integer i -> printfn "This is an int! %i" i
+          | Boolean b -> printfn "This is a bool! %A" b
+          
+      - let anInt = Integer 46
+      - intOrBool anInt
+      
+      -Single cases
+        -Useful practice to enforce type safety.
+        
+        - type CustomerId = int   // What is this called?
+        - let printCustomerId (customerId:CustomerId) =
+            printfn ("This is the customerId %i" customerId)
+        - let paymentMethodId = 123
+        - printCustomerId paymentMethodId     //What happens?
+        
+        
+        - type CustomerId = CustomerId of int
+        - let printCustomerId (CustomerId customerId) =   // What are we doing with customerId?
+            printfn ("This is the customerId %i" customerId)
+        - let paymentMethodId = 123
+        - printCustomerId paymentMethodId     //What happens?
+        
+        - let customerId = CustomerId 321
+        - printCustomerId customerId
+        
+        - let (CustomerId customerIdInt) = customerId   //Note: parenthesis must surround the deconstruction.
+        - type SingleEmptyCase = | EmptyCase      //Note: vertical bar must be present.
+        
+      -Equality
+        -Two unions are equal if they have the same type, the same case and the values for that case are equal.
+        - type PaymentMethod = Cash of decimal | Debit of DebitCard
+        - let aCashPayment = Cash 438.72
+        - let otherCashPayment = Cash 438.72
+        - let areEqual = (aCashPayment = otherCashPayment)
+      
+      -Printing
+      - printfn "%A" aCashPayment  //Nice representation
+      - printfn "%O" otherCashPayment  //Not nice
