@@ -3,17 +3,17 @@
 
   - Purpose: Help iQ developers switch to F# - the best language available for .NET. Show adventages of FP paradigm over OO.
   - Paradigm: 
-      - Why FP is better paradigm than others, like OO? 
+      - Why FP? 
   	    - See Bartosz Milewski's [intro post](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
   	    - Check [5 good reasons to move to F# video](https://www.youtube.com/watch?v=-0BB3lU_qr4)
 	    - [Is your language unresonable?](https://fsharpforfunandprofit.com/posts/is-your-language-unreasonable/#can-your-programming-language-do-this)
-  	- Basics: 
+  - Basics: 
       - function signature
       - currying, partial application ([1](https://youtu.be/-0BB3lU_qr4?t=455))
       - pipelining (|>) 
       - f. composition
       - type system
-        - ADTs: record [1](https://youtu.be/-0BB3lU_qr4?t=623), discriminated union
+        - record [1](https://youtu.be/-0BB3lU_qr4?t=623), discriminated union
         - object expressions
         - (class, interface)
   	  - Expressions vs statements:
@@ -33,11 +33,14 @@
   		- Tail recursion
   		- Abstracting recursion: folds, catamorphism (Scott's blog)
   	- (Easy does not mean simple. Rich Hickey: Simple made easy)
-  - Composability
+  - Composability (move it higher?)
+    - Algebraic Data Types (algebra on types)
+    - Functional composition building blocks: `map`, `bind`, `fold`, ...
+    - Effects: Monadic vs applicative
     - Effectful computations with computation expressions: `result`, `async`, `query` (, `cloud`)
     - Dependency rejection
   - DDD/ Domain modelling:
-  	- ADT, algebra on types, Better domain logic representation in type system : _Why F# system with ADTs is great for domain modelling?_
+  	- Better domain logic representation in type system : _Why F# system with ADTs is great for domain modelling?_
   	- show [implementation of know CleanCode example in F#](https://functionalsoftware.net/fsharp-rewrite-of-a-fully-refactored-csharp-clean-code-example-612/) (find in notes), [DevJoy blog post](http://www.devjoy.com/2017/02/reading-f/)
     - Scott's Modeling domain workshop from OpenFSharp
   	- API -> DSL (with custom operators) - check Will Smith talk from OpenFSharp
