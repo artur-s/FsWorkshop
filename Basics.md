@@ -304,3 +304,66 @@
       -Printing
       - printfn "%A" aCashPayment  //Nice representation
       - printfn "%O" otherCashPayment  //Not nice
+
+    - Object expressions
+      -It allows to implement an interface on-the-fly, without having to create a class.
+      
+      - let createResource name =
+          { new System.IDisposable
+            with member this.Dispose() = printfn "%A disposed" name }
+          let useThenDisposeResource =
+            use resource = createResource "A resource"
+            printfn "Starting to use resource"
+            use otherResource = createResource "Another resource"
+            printfn "Starting to use another resource"
+            printfn "done."
+          
+    - Option.
+      - type Option<'a> =
+          | Some of 'a
+          | None
+      
+      - let someInt = Some 2    //Constructor
+        let noInt = None
+        
+        match someInt with
+        | Some i -> printfn "Here is the int %d" x    //Deconstructor
+        | None -> printfn "No value"
+        
+      -Defining option type.
+        - type MiddleName = Option<string>
+        - type PhoneNumber = string option
+      
+      - ["a","b","c"] |> List.tryFind (fun x -> x = "b")  // ??
+      - ["a","b","c"] |> List.tryFind (fun x -> x = "d")  // ??
+      
+      -Printing
+      - let middleName = MiddleName "Dolores"
+      - printfn "%A" middleName  //Nice representation
+      - printfn "%O" middleName  //Also nice
+      
+      -WARNING:
+        -Using `IsSome`, `IsNone` and `Value` should be avoided. Using pattern matching instead. 
+         Why?
+         
+      -Option module
+        -map
+          - let aCost = Some 123.32
+            let aTax = 0.15
+            let addTaxes =
+              match aCost with
+              | Some c -> Some(c + c * aTax)
+              | None -> None
+              
+          - let addTaxes =
+              aCost
+              |> Option.map (fun c -> c + c * aTax)
+          
+        -fold
+          - let amountToPay quantity =
+            match addTaxes with
+            | Some x -> x * quantity
+            | None -> 0
+          - let amountToPay quantity =
+              addTaxes
+              |> Option.fold (fun x -> x * quantity) 0
