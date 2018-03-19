@@ -367,3 +367,159 @@
           - let amountToPay quantity =
               addTaxes
               |> Option.fold (fun x -> x * quantity) 0
+
+    - Classes
+      -They always have parantheses after the class name.
+      -Must have functions attached to them as members.
+      - type CustomerName(firstName, middleInitial, lastName) =   //Note that no parameters type is needed
+          member this.FirstName = firstName           //`this` could be any identifier you want. Just needs to be consistent
+          member this.MiddleInitial = middleInitial
+          member this.LastName = lastName  
+      - type CustomerName(firstName:string, middleInitial:string option, lastName:string) =
+          member this.FirstName = firstName
+          member this.MiddleInitial = middleInitial
+          member this.LastName = lastName
+      - type CustomerName(firstName:string, middleNames:(string * string) option, lastName:string) =
+          member this.FirstName = firstName
+          member this.MiddleNames = middleNames
+          member this.LastName = lastName
+          
+      -Signature
+        -Given:
+        - type ASquare(length:int, name:string) = 
+            member this.Area = length * length
+            member this.Rotate angle times = angle * times
+        -Its signature would be:
+        - type ASquare =
+            class
+              new : length:int * name:string -> ASquare       //constructor signature. Always called `new`
+              member Area : int                               //property signature
+              member Rotate : angle:int -> times:int -> int   //method signature
+            end
+      -Optional private fields and functions.
+        - type ASquare(length:int, name:string) =
+            let mutable mutableColor = "red"                 //private mutable value
+            let scaleUp scale = length * scale               //private function
+            member this.Area = length * length
+            member this.Rotate angle times = angle * times
+            
+            member this.ScaleUp scale = scaleUp scale         //public function
+            member this.SetMutableColor color =               //public wrapper for mutable value
+              mutableColor <- color
+            
+          let aSquareInstance = new ASquare(32, "Squarito")
+          printf "My size would be %d when doubled" (aSquaritoInstance.ScaleUp 2)
+          aSquaritoInstance.SetMutableColor "purple"
+          
+      -Mutable constructor parameters
+        - type AMutableSquare(length:int, name:string) =
+            let mutable mutableLength = length
+            
+            member this.SetLength length =
+              mutableLength <- length
+              
+      -Extra constructor behaviour
+        - type ASquare(length:int, name:string) as this =               //Note the `this`, only needed for `PrintMyArea`
+            let mutable mutableColor = "red" 
+            do printfn "My name is %s and my color is %s" name color    //This is a good way of extra behaviour
+            do this.PrintMyArea()                                       //This is not that good
+            
+            member this.Area = length * length
+            
+            member this.PrintMyArea() =
+              do printfn "My area is %d" this.Area 
+          
+          new ASquare(65, "Your name")
+          
+      -Methods
+        - type CustomerName(firstName, middleInitial, lastName) =
+            member this.FirstName = firstName
+            member this.MiddleInitial = middleInitial
+            member this.LastName = lastName  
+            
+            // Parameterless method. Notice the parenthesis.
+            method this.PrintName() =
+              printfn "My name is %s %s %s" this.FirstName this.MiddleInitial this.LastName
+            
+            // Parameter method
+            method this.GreetPerson nameOfPerson =
+              printfn "Hello %s. %s" nameOfPerson this.PrintName
+              
+          let aCustomer = ACustomer("Bob", "A", "Bobson")    //Note that `new` is not needed.
+          aCustomer.GreetPerson "Joe"
+          
+        -Curried vs Tuple
+          - type CurriedVsTuple() =
+              member this.CurriedAdd x y =
+                x + y
+              
+              member this.TupleAdd(x,y) =
+                x + y
+            
+            let test = new CurriedVsTuple()
+            printfn "%i" <| tc.CurriedAdd 1 2
+            printfn "%i" <| tc.TupleAdd(1,2)
+            
+          -The advantages of tuple form are:
+           * Compatible with other .NET code
+           * Supports named parameters and optional parameters
+           * Supports method overloads
+          -The disadvantages of tuple form are:
+           * Doesn’t support partial application
+           * Doesn’t work well with higher order functions
+           * Doesn’t work well with type inference
+          
+      -Mutable properties
+        - type ASquare(length) = 
+            let mutable length = length
+
+            member this.Length 
+                with get() = length 
+                and set(value) =  Length <- value
+
+            member val Color = "Red"
+            member val Color = "Red" with get, set
+            
+      -Secondary constructors
+        - type ASquare(length, name) = 
+            new(length) = 
+                ASquare(length,"NoName") 
+            new() = 
+                ASquare(length,"NoName") 
+                
+      -Static
+        -Members
+          - type ASquare(length, name) = 
+              member this.Length = length
+              static member NumberOfSides = 4       //Note: There is no `this`.
+              
+            let aSquare = new ASquare(83, "Cuadrado")
+            printfn "The length is %i" aSquare.Length
+            printfn "The number of sides of a square is %i" ASquare.NumberOfSides
+            
+      -Constructors
+        -No static constructors in F#. But it can be emulated.
+        - type StaticConstructor() =
+            static let rand = new System.Random()
+            static do printfn "This can be any other `do`"
+            member this.GetRand() = rand.Next()
+              
+      -Accesibility
+        -All class members are public by default.
+        -`public`, `internal`, `private`
+
+        - type CustomerName(firstName, middleInitial, lastName) =
+            member private this.FirstName = firstName
+            member internal this.MiddleInitial = middleInitial
+            member this.LastName = lastName
+            
+      -Interop
+        -Best to define them in a namespace instead of a module, since modules are exposed as static classes, and classes inside of module are then defined as nested classes inside the static class.
+        
+
+    - Inheritance and abstact classes
+      -Syntax
+        - type DerivedClass(param1, param2) =
+            inherit BaseClass(param1)           //Note it contains the name of the class and constructor already
+            
+      -Abstract and virtual methods
