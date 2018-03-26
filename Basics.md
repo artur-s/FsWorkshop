@@ -597,3 +597,81 @@
         - let addTaxesService (taxer:IAddTaxes) =
             printfn "The total cost is %d" <| taxes.AddTaxes 10.10 0.15
           addTaxesServices aPhone
+
+    
+    
+  - Type Inference
+    - Based on an algorithm called "Hindley-Milner".
+      -Rules
+        * Look at the literals
+        * Look at the functions and other values something interacts with
+        * Look at any explicit type constraints
+        * If there are no constraints anywhere, automatically generalize to generic types
+
+        - Look at the literals
+          - let inferredAsInt x = x + 3
+          - let inferredAsString x = x + "3"
+          - let inferredAsDecimal x = x + 3m
+        - Look at the functions and other values something interacts with
+          - let indirectlyInferredAsInt x = inferredAsInt x
+          - let aString = "this is a string"
+            let meToo = aString
+          - let inferredAsBool x = if x then 0 else 1
+          - let inferredAsSequenceOfInt x = for i in x do printfn "%i" x
+        - Look at any explicit type constraints
+          - let inferredAlsoAsInt (x:int) = x
+          - let inferredIndirectlyAlsoAsInt x = inferredAlsoAsInt x
+          - let inferredAsIntDueToPrint x = printf "%i" x 
+        - Automatically generalize to generic types
+          - let inferredAsGeneric x = x
+          - let inferredInderectlyAsGeneric x = inferredAsGeneric x
+          
+      -Type inference works top-down, bottom-up, front-to-back, back-to-front, etc.
+      
+      -Sometimes it fails to know:
+        * Declarations out of order
+        * Not enough information
+        * Overloaded methods
+        * Quirks of generic numeric functions
+        
+        - Declarations out of order
+          - let addTwoNumber x y = addThreeNumbers + y
+          - let addThreeNumbers x y z = x + y +z
+          
+          - Recursive
+            - let times2 x =
+                if x = 0 then 1
+                else x * 2
+                
+            - let rec times2 x =      //rec needs to be added to indicate recursiveness
+                if x = 0 then 1
+                else x * 2
+          
+          - Simultaneus type
+            - type A = None | AUsesB of B
+              type B = None | BUsesA of A
+              
+            - type A = None | AUsesB of B       //*and* used for simultaneus declarations.
+              and B = None | BUsesA of A
+        
+        - Not enough information and can't be generic
+          - let stringLength x = x.Length
+          
+          - let stringLength (x:string) = x.Length
+          
+        - Not enough information and can't be generic
+          - let concat x = System.String.Concat(x)
+          
+          - let concat (x:string) = System.String.Concat(x)
+          
+        - Quirks of generic numeric functions
+          - let times2 x = x * 2
+            times2 3                //Assumes times2 is int
+            times2 3.3              //Error
+            
+        -Solutions:
+          - Define things before they are used.
+          - Declare first known types.
+          - Annotate all and then remove one by one until the minimum is achieved.
+          
+          
