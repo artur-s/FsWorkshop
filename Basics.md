@@ -523,3 +523,77 @@
             inherit BaseClass(param1)           //Note it contains the name of the class and constructor already
             
       -Abstract and virtual methods
+        - type BaseClass() =
+            abstract member Add: int -> int -> int    // What is the concrete function?
+          
+      -Abstract properties
+        - type BaseClass() =
+            abstract member Pi : float
+            abstract SideLength : int with get, set
+            
+      -However abstract definitions alone won't compile. In order to fix this:
+        -A defaul implementation of the method must be privded; or
+        -Mark the class *abstract* as a whole.
+          
+      -Default implementations
+        - type BaseClass() =
+           abstract member Add: int -> int -> int
+           abstract member Pi : float 
+
+           // defaults
+           default this.Add x y = x + y
+           default this.Pi = 3.1415
+            
+      -Abstract classes
+        - [<AbstractClass>]
+          type AbstractBaseClass() =
+             abstract member Add: int -> int -> int
+             abstract member Pi : float 
+             abstract member SideLength : float with get,set
+      
+      -Overriding methods
+        - [<AbstractClass>]
+          type Currency() =
+            abstract member Symbol: unit -> string 
+
+          type Dollar() =
+            inherit Currency() 
+            override this.Symbol () = "$"
+             
+        - type Phone() =
+            default this.Cost() = "10"
+  
+          type ApplePhone() =
+            inherit Phone() 
+            override this.Cost() = base.Cost() * 3
+    
+    - Interfaces
+      -Syntax
+        - type MyInterface =
+            abstract member Add: int -> int -> int
+            abstract member Pi : float
+            abstract member SideLength : float with get,set
+        - Whats the difference between interfaces and abstract classes?
+
+      -Implementation
+        - type IAddTaxes =
+            abstract member AddTaxes: decimalt -> decimal -> decimal
+
+          type TaxableItem() =
+            interface IAddTaxes with 
+                member this.AddTaxes cost tax = 
+                    cost + (cost * tax)
+
+            interface System.IDisposable with 
+                member this.Dispose() = 
+                    printfn "disposed"
+
+      -Usage
+        -The class must be casted to the interface in order to use its method.
+        - let aPhone = TaxableItem()
+          let phoneTaxer = aPhone :> IAddTaxes      //:> means casting
+          phoneTaxer.AddTaxes 10.10 0.15
+   
+        - let addTaxesService (taxer:IAddTaxes) =
+            printfn "The total cost is %d" <| taxes.AddTaxes 10.10 0.15
+          addTaxesServices aPhone
