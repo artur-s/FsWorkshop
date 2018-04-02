@@ -673,5 +673,201 @@
           - Define things before they are used.
           - Declare first known types.
           - Annotate all and then remove one by one until the minimum is achieved.
+    
+  - Pattern Matching
+    -It is ubiquitous in F#:
+      - Used for binding expressions with `let`
+      - Function parameters
+      - `match`..`with`
+        
+    - Match.
+      - match [something] with 
+        | pattern1 -> expression1
+        | pattern2 -> expression2
+        | pattern3 -> expression3
+        - Note: It looks like a series of lamba expressions where each one has exactly one parameter.
+          So, it can be seen as a choice between a set of lambda expressions.
+          Each choice is deffined by the first pattern that matches the expression.
+          _Order is important_ (unlike `switch`)
+                    
+      - let x =
+          match "a" with
+          | "a" -> 1
+          | "b" -> 2
+          | _ -> 999
           
+      - let x =
+          match "a" with
+          | _ -> 999
+          | "a" -> 1
+          | "b" -> 2
+      -`match`..`with` is an expression; thus, all branches mush evaluate to the same type
+        - let x y =
+            match y with
+            | "a" -> 1
+            | "b" -> "letre"
+            | _ -> false
+      -Since it is an expression it can nested, embedded in a lambda, etc.
+      
+      -Formatting suggestions
+        - Alignment of `| expression` should be directly under `match`
+        - `match`..`with` should be on a new line
+        - The expression after `->` should be on a new line when expression is long.
+        
+      -Exhaustive matching
+        -There must always be a branch that matches.
+          -Compiler will warn about it. (Sometimes unnecessarily, in which a `_` can be used. Be sure to document why its being used)
+          -If ignored and unmatched, a `MatchFailureException` will be thrown.
+        -Avoid using wildcard, specially in union types. This will help catching errors when a new case is added to the union.
+          - type PaymentMethods = Cash | Debit | Credit
+            let pay paymentMethod =
+              match paymentMethod with
+              | Cash -> printf "Cash was used"
+              | Debit -> printf "Debit was used"
+              | Credit -> printf "Credit was used"
+              | _ -> "Error" //What happens if we add `GiftCard` to the `PaymentMethods` union type?
+              
+      - Binding to value
+        - let x =
+            match ("a", "b") with
+            | (y, "b") -> printfn "y=%0" y
+            | ("a", z) -> printfn "z=%0" z
+      - Logical
+        - let validatePaymentMethodForCashBack (paymentMethod, overpaid, overpaidEnabled) =
+            match (paymentMethod, overpaid, overpaidEnabled) with
+            | (_ , false, _ ) -> true
+            | (Cash, true, _ ) | (Debit, true, true) -> true
+            | (x, true, false) & ((Credit, _ , _ ) | (Debitit, _ , _ ))       //Note a single `&` is used
+                -> failwith (sprintfn "%A is not configured for overpayments x)
+      - On lists
+        -Lists can be matched explicitly in the form [x;y;z] or in the “cons” form head::tail.
+        - let y =
+            match [1; 2; 3] with
+            | [1;x;y] -> printfn "x=%i y=%i" x y      //Square brackets needed
+            | 1::tail -> printfn "tail=%A" tail       //No square brackets
+            | [] -> printfn "empty"
           
+        - let rec loopAndSum aList sumSoFar = 
+            match aList with
+            | [] -> 
+                sumSoFar
+            | x::xs -> 
+                let newSumSoFar = sumSoFar + x
+                loopAndSum xs newSumSoFar
+      - On Tuples
+        - let aTuple = (32, false)
+          match aTuple with
+          | (32, _ ) -> printfn "Matched in 32"
+          | (_ , true) -> printfn "Matched in true"
+          | (_ , _ ) -> printfn "Something else"
+          
+      - On Record
+        - type Customer = {FirstName:string; LastName:string}
+          let aCustomer = {FirstName:"Clinton"; LastName:"Adams"}
+          match aCustomer with
+          | {LastName="Adams"} -> printfn "It is an Adams"
+          | {FirstName="Adam"} -> printfn "It's name is Adam"
+          | _ -> printfn "No Adam in either name"
+          
+      - On Union
+        - type PaymentType = Cash of decimal | Debit of (string, string, decimal)
+          let aPayment = Debit ("Name On Card, "1234-4321")
+          match aPayment with
+          | Cash amount -> sprintfn "Payment of %d was cash" amount
+          | Debit (name, number, amount) ->
+              sprintfn "Payment of %d was debit by %s with %s" amount name number
+              
+      - `as`
+        - let x =
+            match ("john doe", "1234-4321", 30.32) with
+            | (x, y, z) as debitPayment ->
+              sprintfn "Payment of %d was debit by %s with %s" z x y
+              sprintfn "Using the whole as %A" debitPayment
+              
+      - On Subtypes (Code smell)
+        - let new Object()
+        - let y =
+            match x with
+            | :? System.Int32 ->
+                printfn "its an int"
+            | :? System.String ->
+                printfn "its a string"
+            | _ -> printfn "its something else"
+                
+      - On multiple values
+        -Is not allowed. But the values can be inserted into a tuple
+        - let matchOnCustomerAndPaymentType customer paymentType =
+            match (customer, paymentType) with
+            | ({LastName="Adams"}, pT) ->
+              printfn "Adams paid with %A" pT
+            | (c, Cash _ ) ->
+              printfn "Cash was paid by %A" c
+            | _ -> printfn "Something else happened"
+              
+      - Guards
+        -`when` is used for Guards           
+        - Guards can be used for all sorts of things that pure patterns can’t be used for, such as:
+            * Comparing the bound values
+            * Testing object properties
+            * Different kinds of matching, such as regular expressions
+            * Conditionals derived from functions
+        *Comparing the bound values
+        - let elementsAreEqual aTuple = 
+            match aTuple with 
+            | (x,y) -> 
+                if (x=y) then printfn "They are the same" 
+                else printfn "They are different" 
+                
+          let elementsAreEqual aTuple = 
+            match aTuple with 
+            | (x,y) when x=y -> 
+                printfn "They are the same" 
+            | _ ->
+                printfn "They are different"
+        *Testing object properties
+        - type Payment = {Cost:decimal; Payment:decimal}
+        - let isOverpayment payment =
+            match payment:Payment with
+            | x when x.Payment > x.Cost -> trye
+            | _ -> false
+            
+        *Different kinds of matching, such as regular expressions
+        - let classifyString aString = 
+            match aString with 
+            | x when Regex.Match(x,@".+@.+").Success-> 
+                printfn "%s is an email" aString
+            | _ -> 
+                printfn "%s is something else" aString
+                
+        *Conditionals derived from functions
+        - let costInString x =
+            match x with
+            | x when x = 0 -> printfn "its free"
+            | x when x > 100 -> printfn "its expensive!"
+            | x when x < 0 -> printfn "something is fishy"
+            | _ -> "I guess its ok"
+      - `function`
+        - let f aValue =
+            match aValue with
+            | pattern1 -> expression1
+            | pattern2 -> expression2
+          let f =
+            function
+            | pattern1 -> expression1
+            | pattern2 -> expression2
+            
+        - // using match..with
+          [1..10] |> List.map (fun i ->
+                  match i with 
+                  | 1 | 2 | 3 | 5 | 7 -> sprintf "%i is prime" i
+                  | _ -> sprintf "%i is not prime" i
+                  )
+
+          // using function keyword
+          [1..10] |> List.map (function 
+                  | 1 | 2 | 3 | 5 | 7 -> sprintf "prime"
+                  | _ -> sprintf "not prime"
+                  )
+
+    - let
+    - Active Patterns
