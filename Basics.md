@@ -870,4 +870,26 @@
                   )
 
     - let
+      -There are two uses of `let`:
+        *Top level: a named expression at the top lovel of a module; analog to methods.
+        *Local: used in the context of some expression.
+        
+      -It can use patterns directly
+        - let anInt = 1
+        - let aPerson = {FirstName:"Ann"; LastName:"Robinson"}
+      -In functions with parameters
+        - let multiply (a,b) = a * b
+        
     - Active Patterns
+      -Dynamically parse or detect a pattern.
+      - let (|Int|_|) str =
+          match System.Int32.TryParse(str) with
+          | (true,int) -> Some(int)
+          | _ -> None
+        let isInt str = 
+          match str with
+          | Int i -> true
+          | _ -> false
+        isInt "3"
+        isInt "Three" 
+        
