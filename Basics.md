@@ -892,4 +892,73 @@
           | _ -> false
         isInt "3"
         isInt "Three" 
+    
+  - Asynchronous programming or asynchronous workflows
+    -They are objects that encapsulate a background task providing several operations
+    - let timerAsync =
+        let timer = new Timer(1000m)
+        let timerEvent = Async.AwaitEvent (timer.Elapsed) |> Async.Ignore
         
+        timer.Start()
+        
+        Async.RunSynchronously timerEvent
+        
+      *Async.AwaitEvent -> Creates an `async` object directly from the event.
+      *Async.Ignore -> Ignores the result
+      *Async.RunSynchronously -> blocks on the async object until it has completed
+    -Note: async workflows can be used with `IAsyncResult`, begin/end, and other .NET methods
+    
+    -Manually creating async workflows.
+      - Use `async` keyword and curly braces and inside a set of expressions to be executed in the background.
+      
+      - let sleepWorkflow = async {
+          do! Async.Sleep 1000
+        }
+        Async.RunSynchronously sleepWorkflow
+        
+    -Nested workflows
+      -Within the braces, nested worflows can be blocked on by using `let!`, `do!`, `use`
+      - let calculatePrices
+          (calculateTax: (CompanyId * InvoiceId) -> Async<TaxCalculation>)
+          (getProductPricing: CompanyId * CatalogItemId list -> Async<ProductsPricing>)
+          (companyId, invoiceId, catalogIds)
+          : Async<Sale>
+          = async{
+            let! calculateTaxWorkflow =
+              calculateTax (companyId, invoiceId)
+              |> Async.StartChild
+            let! getProductPricingWorkflow =
+              getProductPricing (companyId, catalogIds)
+              |> Async.StartChild
+            let calculation = calculateTaxWorkflow
+            let productPricing = getProductPricingWorkflow
+            
+            return Sale {Taxes = calculation
+                         Pricing = pricing}
+          }
+          Async.RunSynchronously calculatePrices 
+          
+      -Cancelling workflows
+        -Use the `CancellationToken` class. Any nested async call will check the cancellation token automatically.
+        - let cancellationSource = new CancellationtokenSource()
+          Async.Start (calculationPrices, cancellationSource.Token)
+          cancellationSource.Cancel()
+          
+      -Serial workflows
+        - let calculatePricesInSeries = async {
+            let! calculatePricesFirst =
+              calculatePrices calculateTax getProductPricing (1234, "invoice1", [1, 2, 3])
+            let! calculatePricesAfter =
+              calculatePrices calculateTax getProductPricing (1234, "invoice2", [11, 12, 13])   
+          }
+          Async.RunSynchronously calculatePricesInSeries
+          
+      -Parallel workflows
+        - let calculatePrices1 =
+              calculatePrices calculateTax getProductPricing (1234, "invoice1", [1, 2, 3])
+          let calculatePrices2 =
+            calculatePrices calculateTax getProductPricing (1234, "invoice2", [11, 12, 13])
+            
+          [calculatePrices1; calculatePrices2]
+          |> Async.Parallel
+          |> Async.RunSynchronously
