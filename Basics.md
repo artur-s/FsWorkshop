@@ -869,6 +869,28 @@
                   | _ -> sprintf "not prime"
                   )
 
+      - recursive
+      
+        ```fsharp
+        type Contact = 
+            | EmailAddress of string
+            | PhoneNumeber of string
+
+        type Member = {
+            FirstName:string
+            LastName:string
+            Age:byte
+            Contact:Contact }
+
+        let (|Adult|Minor|) age =
+            if age >= 18uy then Adult else Minor
+
+        let adultsPhone member' =
+            match member' with
+            | {Age = Adult; Contact = PhoneNumeber phone } -> Some phone
+            | _ -> None
+        ```
+
     - let
       -There are two uses of `let`:
         *Top level: a named expression at the top lovel of a module; analog to methods.
