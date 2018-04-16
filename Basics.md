@@ -952,23 +952,29 @@
           Each choice is deffined by the first pattern that matches the expression.
           _Order is important_ (unlike `switch`)
                     
-      - let x =
+      - ```fsharp
+        let x =
           match "a" with
           | "a" -> 1
           | "b" -> 2
           | _ -> 999
+        ```
           
-      - let x =
+      - ```fsharp
+        let x =
           match "a" with
           | _ -> 999
           | "a" -> 1
           | "b" -> 2
+        ```
       -`match`..`with` is an expression; thus, all branches mush evaluate to the same type
-        - let x y =
+        - ```fsharp
+          let x y =
             match y with
             | "a" -> 1
             | "b" -> "letre"
             | _ -> false
+          ```
       -Since it is an expression it can nested, embedded in a lambda, etc.
       
       -Formatting suggestions
@@ -981,90 +987,112 @@
           -Compiler will warn about it. (Sometimes unnecessarily, in which a `_` can be used. Be sure to document why its being used)
           -If ignored and unmatched, a `MatchFailureException` will be thrown.
         -Avoid using wildcard, specially in union types. This will help catching errors when a new case is added to the union.
-          - type PaymentMethods = Cash | Debit | Credit
+          - ```fsharp
+            type PaymentMethods = Cash | Debit | Credit
             let pay paymentMethod =
               match paymentMethod with
               | Cash -> printf "Cash was used"
               | Debit -> printf "Debit was used"
               | Credit -> printf "Credit was used"
               | _ -> "Error" //What happens if we add `GiftCard` to the `PaymentMethods` union type?
+            ```
               
       - Binding to value
-        - let x =
+        - ```fsharp
+          let x =
             match ("a", "b") with
             | (y, "b") -> printfn "y=%0" y
             | ("a", z) -> printfn "z=%0" z
+          ```
       - Logical
-        - let validatePaymentMethodForCashBack (paymentMethod, overpaid, overpaidEnabled) =
+        - ```fsharp
+          let validatePaymentMethodForCashBack (paymentMethod, overpaid, overpaidEnabled) =
             match (paymentMethod, overpaid, overpaidEnabled) with
             | (_ , false, _ ) -> true
             | (Cash, true, _ ) | (Debit, true, true) -> true
             | (x, true, false) & ((Credit, _ , _ ) | (Debitit, _ , _ ))       //Note a single `&` is used
                 -> failwith (sprintfn "%A is not configured for overpayments x)
+          ```
       - On lists
         -Lists can be matched explicitly in the form [x;y;z] or in the “cons” form head::tail.
-        - let y =
+        - ```fsharp
+          let y =
             match [1; 2; 3] with
             | [1;x;y] -> printfn "x=%i y=%i" x y      //Square brackets needed
             | 1::tail -> printfn "tail=%A" tail       //No square brackets
             | [] -> printfn "empty"
+          ```
           
-        - let rec loopAndSum aList sumSoFar = 
+        - ```fsharp
+          let rec loopAndSum aList sumSoFar = 
             match aList with
             | [] -> 
                 sumSoFar
             | x::xs -> 
                 let newSumSoFar = sumSoFar + x
                 loopAndSum xs newSumSoFar
+          ```
       - On Tuples
-        - let aTuple = (32, false)
+        - ```fsharp
+          let aTuple = (32, false)
           match aTuple with
           | (32, _ ) -> printfn "Matched in 32"
           | (_ , true) -> printfn "Matched in true"
           | (_ , _ ) -> printfn "Something else"
+          ```
           
       - On Record
-        - type Customer = {FirstName:string; LastName:string}
+        - ```fsharp
+          type Customer = {FirstName:string; LastName:string}
           let aCustomer = {FirstName:"Clinton"; LastName:"Adams"}
           match aCustomer with
           | {LastName="Adams"} -> printfn "It is an Adams"
           | {FirstName="Adam"} -> printfn "It's name is Adam"
           | _ -> printfn "No Adam in either name"
+          ```
           
       - On Union
-        - type PaymentType = Cash of decimal | Debit of (string, string, decimal)
+        - ```fsharp
+          type PaymentType = Cash of decimal | Debit of (string, string, decimal)
           let aPayment = Debit ("Name On Card, "1234-4321")
           match aPayment with
           | Cash amount -> sprintfn "Payment of %d was cash" amount
           | Debit (name, number, amount) ->
               sprintfn "Payment of %d was debit by %s with %s" amount name number
+          ```
               
       - `as`
-        - let x =
+        - ```fsharp
+          let x =
             match ("john doe", "1234-4321", 30.32) with
             | (x, y, z) as debitPayment ->
               sprintfn "Payment of %d was debit by %s with %s" z x y
               sprintfn "Using the whole as %A" debitPayment
+          ```
               
       - On Subtypes (Code smell)
-        - let new Object()
-        - let y =
+        - ```fsharp
+          let x = new Object()
+          let y =
             match x with
             | :? System.Int32 ->
                 printfn "its an int"
             | :? System.String ->
                 printfn "its a string"
             | _ -> printfn "its something else"
+          ```
                 
       - On multiple values
         -Is not allowed. But the values can be inserted into a tuple
-        - let matchOnCustomerAndPaymentType customer paymentType =
+        - ```fsharp
+          let matchOnCustomerAndPaymentType customer paymentType =
             match (customer, paymentType) with
             | ({LastName="Adams"}, pT) ->
               printfn "Adams paid with %A" pT
             | (c, Cash _ ) ->
               printfn "Cash was paid by %A" c
             | _ -> printfn "Something else happened"
+          ```
               
       - Guards
         -`when` is used for Guards           
@@ -1074,7 +1102,8 @@
             * Different kinds of matching, such as regular expressions
             * Conditionals derived from functions
         *Comparing the bound values
-        - let elementsAreEqual aTuple = 
+        - ```fsharp
+          let elementsAreEqual aTuple = 
             match aTuple with 
             | (x,y) -> 
                 if (x=y) then printfn "They are the same" 
@@ -1086,30 +1115,40 @@
                 printfn "They are the same" 
             | _ ->
                 printfn "They are different"
+          ```
         *Testing object properties
-        - type Payment = {Cost:decimal; Payment:decimal}
-        - let isOverpayment payment =
+        - ```fsharp
+          type Payment = {Cost:decimal; Payment:decimal}
+          ```
+        - ```fsharp
+          let isOverpayment payment =
             match payment:Payment with
             | x when x.Payment > x.Cost -> trye
             | _ -> false
+          ```
             
         *Different kinds of matching, such as regular expressions
-        - let classifyString aString = 
+        - ```fsharp
+          let classifyString aString = 
             match aString with 
             | x when Regex.Match(x,@".+@.+").Success-> 
                 printfn "%s is an email" aString
             | _ -> 
                 printfn "%s is something else" aString
+          ```
                 
         *Conditionals derived from functions
-        - let costInString x =
+        - ```fsharp
+          let costInString x =
             match x with
             | x when x = 0 -> printfn "its free"
             | x when x > 100 -> printfn "its expensive!"
             | x when x < 0 -> printfn "something is fishy"
             | _ -> "I guess its ok"
+          ```
       - `function`
-        - let f aValue =
+        - ```fsharp
+          let f aValue =
             match aValue with
             | pattern1 -> expression1
             | pattern2 -> expression2
@@ -1117,8 +1156,10 @@
             function
             | pattern1 -> expression1
             | pattern2 -> expression2
+          ```
             
-        - // using match..with
+        - ```fsharp
+          // using match..with
           [1..10] |> List.map (fun i ->
                   match i with 
                   | 1 | 2 | 3 | 5 | 7 -> sprintf "%i is prime" i
@@ -1130,6 +1171,7 @@
                   | 1 | 2 | 3 | 5 | 7 -> sprintf "prime"
                   | _ -> sprintf "not prime"
                   )
+          ```
 
       - recursive
       
@@ -1159,14 +1201,21 @@
         *Local: used in the context of some expression.
         
       -It can use patterns directly
-        - let anInt = 1
-        - let aPerson = {FirstName:"Ann"; LastName:"Robinson"}
+        - ```fsharp
+          let anInt = 1
+          ```
+        - ```fsharp
+          let aPerson = {FirstName:"Ann"; LastName:"Robinson"}
+          ```
       -In functions with parameters
-        - let multiply (a,b) = a * b
+        - ```fsharp
+          let multiply (a,b) = a * b
+          ```
         
     - Active Patterns
       -Dynamically parse or detect a pattern.
-      - let (|Int|_|) str =
+      - ```fsharp
+        let (|Int|_|) str =
           match System.Int32.TryParse(str) with
           | (true,int) -> Some(int)
           | _ -> None
@@ -1176,33 +1225,39 @@
           | _ -> false
         isInt "3"
         isInt "Three" 
+        ```
     
   - Asynchronous programming or asynchronous workflows
     -They are objects that encapsulate a background task providing several operations
-    - let timerAsync =
+    - ```fsharp
+      let timerAsync =
         let timer = new Timer(1000m)
         let timerEvent = Async.AwaitEvent (timer.Elapsed) |> Async.Ignore
         
         timer.Start()
         
         Async.RunSynchronously timerEvent
+      ```
         
-      *Async.AwaitEvent -> Creates an `async` object directly from the event.
-      *Async.Ignore -> Ignores the result
-      *Async.RunSynchronously -> blocks on the async object until it has completed
+      *`Async.AwaitEvent` -> Creates an `async` object directly from the event.
+      *`Async.Ignore` -> Ignores the result
+      *`Async.RunSynchronously` -> blocks on the async object until it has completed
     -Note: async workflows can be used with `IAsyncResult`, begin/end, and other .NET methods
     
     -Manually creating async workflows.
       - Use `async` keyword and curly braces and inside a set of expressions to be executed in the background.
       
-      - let sleepWorkflow = async {
+      - ```fsharp
+        let sleepWorkflow = async {
           do! Async.Sleep 1000
         }
         Async.RunSynchronously sleepWorkflow
+        ```
         
     -Nested workflows
       -Within the braces, nested worflows can be blocked on by using `let!`, `do!`, `use`
-      - let calculatePrices
+      - ```fsharp
+        let calculatePrices
           (calculateTax: (CompanyId * InvoiceId) -> Async<TaxCalculation>)
           (getProductPricing: CompanyId * CatalogItemId list -> Async<ProductsPricing>)
           (companyId, invoiceId, catalogIds)
@@ -1221,24 +1276,30 @@
                          Pricing = pricing}
           }
           Async.RunSynchronously calculatePrices 
+        ```
           
       -Cancelling workflows
         -Use the `CancellationToken` class. Any nested async call will check the cancellation token automatically.
-        - let cancellationSource = new CancellationtokenSource()
+        - ```fsharp
+          let cancellationSource = new CancellationtokenSource()
           Async.Start (calculationPrices, cancellationSource.Token)
           cancellationSource.Cancel()
+          ```
           
       -Serial workflows
-        - let calculatePricesInSeries = async {
+        - ```fsharp
+          let calculatePricesInSeries = async {
             let! calculatePricesFirst =
               calculatePrices calculateTax getProductPricing (1234, "invoice1", [1, 2, 3])
             let! calculatePricesAfter =
               calculatePrices calculateTax getProductPricing (1234, "invoice2", [11, 12, 13])   
           }
           Async.RunSynchronously calculatePricesInSeries
+          ```
           
       -Parallel workflows
-        - let calculatePrices1 =
+        - ```fsharp
+          let calculatePrices1 =
               calculatePrices calculateTax getProductPricing (1234, "invoice1", [1, 2, 3])
           let calculatePrices2 =
             calculatePrices calculateTax getProductPricing (1234, "invoice2", [11, 12, 13])
@@ -1246,3 +1307,4 @@
           [calculatePrices1; calculatePrices2]
           |> Async.Parallel
           |> Async.RunSynchronously
+          ```
