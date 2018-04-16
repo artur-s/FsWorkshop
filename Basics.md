@@ -154,7 +154,7 @@
       ```fsharp
       let h (x:int) = g ( f(x) )
       ```
-    - Additionlly, the two functions can be combined without declaring its signatures.  
+    - Additionlly, the two functions can be combined without defining them.  
       ```fsharp
       let compose f g x = g ( f(x) )
       ```
@@ -162,36 +162,29 @@
       ```fsharp
       let compose : ('a -> 'b) -> ('b -> 'c) -> 'a -> 'c
       ```
-    - The actual definition of composition. 
+    - The definition of composition operator. 
       ```fsharp
       let (>>) f g x = g ( f(x) )
+      ```
+      Or using partial application
+      ```fsharp
+      let (>>) f g = fun x -> g (f x)
       ```
     - Note: This is only possible because every function has one input and one output.
     
     - Example:  
       ```fsharp
       let add3 x = x + 3
-      ```
-      ```fsharp
       let multiply2 x = x * 2
-      ```
-      ```fsharp
-      let add3Multiply2 x = (>>) add3 multiply2 x
-      ```
-    - We can partially apply it
-      ```fsharp
-      let add3Multiply2 = (>>) add3 multiply2
-      ```
-    - And since now its a binary operation
-      ```fsharp
       let add3Multiply2 = add3 >> multiply2
       add3Multiply2 5
       ```
     - Reverse composition
       ```fsharp
+      let reverseCompose : ('b -> 'c) -> ('a -> 'b) -> 'a -> 'c
       let (<<) f g x = g ( f(x) )
       ```
-      - Used mainly to make code more like English
+      - Used mainly to make code more like English and more concise
       
       ```fsharp
       let aList = []
@@ -200,14 +193,11 @@
       ```
     
   - Pipelining vs Function composition
-    - Pipelining -> The input to each function is the output of the previous function.
+    - Pipelining -> The input to each function is the output of the previous function. In other words, the expression on the left side of the `|>` operator is passed to the function on the right side.
     - Function composition -> It returns a function instead of immediately invoking the sequence.
     
   - Types
-    - They are used in two main ways:
-      * As compile time unit tests.
-      * As domains for functions to act upon. It is a sort of data modeling tool that allows to represent a real world domain in code.
-      * The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the “compile time unit tests” work. In the ideal scenario, if your program compiles, then it really is correct!
+    - The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the “compile time unit tests” work. In the ideal scenario, if your program compiles, then it really is correct!
     - All tpes definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
       ```fsharp
       type A = int
@@ -270,8 +260,20 @@
       type CustomerPaymentMethod = PaymentMethodId * CustomerId
       ```
       - They provide documentation.
-      - Decoupling between usage and the implementation of a type.
+      - Decoupling between the meaning and the definition of a type.
       - Its not really a new type, just an alias.
+      - Two different aliases of the same type are compatible and the compiler does not show an error. 
+        For example, the following code type-checks even though a different alias is passed to the printInvoiceId function
+        ```fsharp
+        type InvoiceId = Guid
+        type CustomerId = Guid
+
+        let printInvoiceId (i:InvoiceId) =
+            printfn "Invoice id is:%A" i
+
+        let customerId:CustomerId = Guid.NewGuid()
+        printInvoiceId customerId
+        ```
 
     - Tuples
       - Imagine the Cartesian product of two collections. Each combination is expressed as (a1, b1), (a1, b2), ..., (a2, b1)
@@ -286,7 +288,7 @@
         let tuple4 = ("Bob", 42, true)
         ```
         ```fsharp
-        let tuple5 = 1, 2, 3            //Note that parenthesis doesn't matter.
+        let tuple5 = 1, 2, 3            //Note that parenthesis are not required.
         ```
         ```fsharp
         type PersonalPayment = Person * PaymentMethod
@@ -301,7 +303,7 @@
         let t1, t2 = t  //Deconstructing
         ```
         ```fsharp
-        let t1, _ = t   //Underscore means "whatever"
+        let t1, _ = t   //_ is a wildcard
         ```
         ```fsharp
         let t1 = fst t  //fst extracts the first element
@@ -310,7 +312,7 @@
         let t2 = snd t  //snd extracts the second element.
         ```
       
-      -Tuples are equal if they have the same length and values in each slot.
+      -Tuples are compared by structure. In other words, they are equal if they have the same length and values in each slot.
       - `(1,2) = (1,2)`             ?
       - `(1,2,3) = (1,3,2)`         ?
       - `(1, (2,3), 4) = (1,2,3,4)` ?
@@ -320,6 +322,7 @@
       -Printing
         ```fsharp
         printf "%s" t1.ToString()
+        printfn "%s" t1.ToString()
         ```
         ```fsharp
         printf "%O" t1
@@ -512,7 +515,7 @@
         ```
       
       - WARNING:
-        - Using `IsSome`, `IsNone` and `Value` should be avoided. Using pattern matching instead. 
+        - Using `IsSome`, `IsNone` and `Value` should be avoided. Use pattern matching instead. However, `IsSome` and `IsNone` are sometimes useful when you don't care about the value.
           Why?
          
       - Option module
