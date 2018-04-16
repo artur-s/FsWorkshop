@@ -823,6 +823,13 @@
           ```
     
     
+  - Expressions vs statements
+    
+    A fundamental building block of F# programs is an _expression_.
+    
+    - _statement_ - a command that performs some action and usually changes the state  or transfers the control flow, e.g. `return` statement_p.328
+    - _expression_ - a computation that can be evaluated and gives a result.
+
   - Type Inference
     - Based on an algorithm called "Hindley-Milner".
       - Rules
