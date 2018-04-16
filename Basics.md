@@ -468,28 +468,38 @@
         ```
           
     - Option.
-      - type Option<'a> =
+      - ```fsharp
+        type Option<'a> =
           | Some of 'a
           | None
+        ```
       
-      - let someInt = Some 2    //Constructor
+      - ```fsharp
+        let someInt = Some 2    //Constructor
         let noInt = None
         
         match someInt with
         | Some i -> printfn "Here is the int %d" x    //Deconstructor
         | None -> printfn "No value"
+        ```
         
       -Defining option type.
-        - type MiddleName = Option<string>
-        - type PhoneNumber = string option
+        - ```fsharp
+          type MiddleName = Option<string>
+          ```
+        - ```fsharp
+          type PhoneNumber = string option
+          ```
       
-      - ["a","b","c"] |> List.tryFind (fun x -> x = "b")  // ??
-      - ["a","b","c"] |> List.tryFind (fun x -> x = "d")  // ??
-      
+        - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
+        - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
+
       -Printing
-      - let middleName = MiddleName "Dolores"
-      - printfn "%A" middleName  //Nice representation
-      - printfn "%O" middleName  //Also nice
+        - ```fsharp
+          let middleName = MiddleName "Dolores"
+          printfn "%A" middleName  //Nice representation
+          printfn "%O" middleName  //Also nice
+          ```
       
       -WARNING:
         -Using `IsSome`, `IsNone` and `Value` should be avoided. Using pattern matching instead. 
@@ -497,56 +507,71 @@
          
       -Option module
         -map
-          - let aCost = Some 123.32
+          - ```fsharp
+            let aCost = Some 123.32
             let aTax = 0.15
             let addTaxes =
               match aCost with
               | Some c -> Some(c + c * aTax)
               | None -> None
               
-          - let addTaxes =
+            let addTaxes =
               aCost
               |> Option.map (fun c -> c + c * aTax)
+            ```
           
         -fold
-          - let amountToPay quantity =
+          - ```fsharp
+            let amountToPay quantity =
             match addTaxes with
             | Some x -> x * quantity
             | None -> 0
-          - let amountToPay quantity =
+            let amountToPay quantity =
               addTaxes
               |> Option.fold (fun x -> x * quantity) 0
+            ```
 
     - Classes
       -They always have parantheses after the class name.
       -Must have functions attached to them as members.
-      - type CustomerName(firstName, middleInitial, lastName) =   //Note that no parameters type is needed
+      - ```fsharp
+        type CustomerName(firstName, middleInitial, lastName) =   //Note that no parameters type is needed
           member this.FirstName = firstName           //`this` could be any identifier you want. Just needs to be consistent
           member this.MiddleInitial = middleInitial
-          member this.LastName = lastName  
-      - type CustomerName(firstName:string, middleInitial:string option, lastName:string) =
+          member this.LastName = lastName 
+        ```
+      - ```fsharp
+        type CustomerName(firstName:string, middleInitial:string option, lastName:string) =
           member this.FirstName = firstName
           member this.MiddleInitial = middleInitial
           member this.LastName = lastName
-      - type CustomerName(firstName:string, middleNames:(string * string) option, lastName:string) =
+        ```
+      - ```fsharp
+        type CustomerName(firstName:string, middleNames:(string * string) option, lastName:string) =
           member this.FirstName = firstName
           member this.MiddleNames = middleNames
           member this.LastName = lastName
+        ```
           
       -Signature
         -Given:
-        - type ASquare(length:int, name:string) = 
+        - ```fsharp
+          type ASquare(length:int, name:string) = 
             member this.Area = length * length
             member this.Rotate angle times = angle * times
+          ```
         -Its signature would be:
-        - type ASquare =
+        - ```fsharp
+          type ASquare =
             class
               new : length:int * name:string -> ASquare       //constructor signature. Always called `new`
               member Area : int                               //property signature
               member Rotate : angle:int -> times:int -> int   //method signature
             end
+          ```
       -Optional private fields and functions.
-        - type ASquare(length:int, name:string) =
+        - ```fsharp
+          type ASquare(length:int, name:string) =
             let mutable mutableColor = "red"                 //private mutable value
             let scaleUp scale = length * scale               //private function
             member this.Area = length * length
@@ -559,16 +584,20 @@
           let aSquareInstance = new ASquare(32, "Squarito")
           printf "My size would be %d when doubled" (aSquaritoInstance.ScaleUp 2)
           aSquaritoInstance.SetMutableColor "purple"
+          ```
           
       -Mutable constructor parameters
-        - type AMutableSquare(length:int, name:string) =
+        - ```fsharp
+          type AMutableSquare(length:int, name:string) =
             let mutable mutableLength = length
             
             member this.SetLength length =
               mutableLength <- length
+          ```
               
       -Extra constructor behaviour
-        - type ASquare(length:int, name:string) as this =               //Note the `this`, only needed for `PrintMyArea`
+        - ```fsharp
+          type ASquare(length:int, name:string) as this =               //Note the `this`, only needed for `PrintMyArea`
             let mutable mutableColor = "red" 
             do printfn "My name is %s and my color is %s" name color    //This is a good way of extra behaviour
             do this.PrintMyArea()                                       //This is not that good
@@ -579,9 +608,11 @@
               do printfn "My area is %d" this.Area 
           
           new ASquare(65, "Your name")
+          ```
           
       -Methods
-        - type CustomerName(firstName, middleInitial, lastName) =
+        - ```fsharp
+          type CustomerName(firstName, middleInitial, lastName) =
             member this.FirstName = firstName
             member this.MiddleInitial = middleInitial
             member this.LastName = lastName  
@@ -596,9 +627,11 @@
               
           let aCustomer = ACustomer("Bob", "A", "Bobson")    //Note that `new` is not needed.
           aCustomer.GreetPerson "Joe"
+          ```
           
         -Curried vs Tuple
-          - type CurriedVsTuple() =
+          - ```fsharp
+            type CurriedVsTuple() =
               member this.CurriedAdd x y =
                 x + y
               
@@ -608,6 +641,7 @@
             let test = new CurriedVsTuple()
             printfn "%i" <| tc.CurriedAdd 1 2
             printfn "%i" <| tc.TupleAdd(1,2)
+            ```
             
           -The advantages of tuple form are:
            * Compatible with other .NET code
@@ -619,7 +653,8 @@
            * Doesn’t work well with type inference
           
       -Mutable properties
-        - type ASquare(length) = 
+        - ```fsharp
+          type ASquare(length) = 
             let mutable length = length
 
             member this.Length 
@@ -628,39 +663,48 @@
 
             member val Color = "Red"
             member val Color = "Red" with get, set
+          ```
             
       -Secondary constructors
-        - type ASquare(length, name) = 
+        - ```fsharp
+          type ASquare(length, name) = 
             new(length) = 
                 ASquare(length,"NoName") 
             new() = 
                 ASquare(length,"NoName") 
+          ```
                 
       -Static
         -Members
-          - type ASquare(length, name) = 
+          - ```fsharp
+            type ASquare(length, name) = 
               member this.Length = length
               static member NumberOfSides = 4       //Note: There is no `this`.
               
             let aSquare = new ASquare(83, "Cuadrado")
             printfn "The length is %i" aSquare.Length
             printfn "The number of sides of a square is %i" ASquare.NumberOfSides
+            ```
             
       -Constructors
         -No static constructors in F#. But it can be emulated.
-        - type StaticConstructor() =
+        - ```fsharp
+          type StaticConstructor() =
             static let rand = new System.Random()
             static do printfn "This can be any other `do`"
             member this.GetRand() = rand.Next()
+          ```
               
       -Accesibility
         -All class members are public by default.
         -`public`, `internal`, `private`
 
-        - type CustomerName(firstName, middleInitial, lastName) =
+        - ```fsharp
+          type CustomerName(firstName, middleInitial, lastName) =
             member private this.FirstName = firstName
             member internal this.MiddleInitial = middleInitial
             member this.LastName = lastName
+          ```
             
       -Interop
         -Best to define them in a namespace instead of a module, since modules are exposed as static classes, and classes inside of module are then defined as nested classes inside the static class.
@@ -668,64 +712,81 @@
 
     - Inheritance and abstact classes
       -Syntax
-        - type DerivedClass(param1, param2) =
+        - ```fsharp
+          type DerivedClass(param1, param2) =
             inherit BaseClass(param1)           //Note it contains the name of the class and constructor already
+          ```
             
       -Abstract and virtual methods
-        - type BaseClass() =
+        - ```fsharp
+          type BaseClass() =
             abstract member Add: int -> int -> int    // What is the concrete function?
+          ```
           
       -Abstract properties
-        - type BaseClass() =
+        - ```fsharp
+          type BaseClass() =
             abstract member Pi : float
             abstract SideLength : int with get, set
+          ```
             
       -However abstract definitions alone won't compile. In order to fix this:
         -A defaul implementation of the method must be privded; or
         -Mark the class *abstract* as a whole.
           
       -Default implementations
-        - type BaseClass() =
-           abstract member Add: int -> int -> int
-           abstract member Pi : float 
+        - ```fsharp
+          type BaseClass() =
+            abstract member Add: int -> int -> int
+            abstract member Pi : float 
 
-           // defaults
-           default this.Add x y = x + y
-           default this.Pi = 3.1415
+            // defaults
+            default this.Add x y = x + y
+            default this.Pi = 3.1415
+          ```
             
       -Abstract classes
-        - [<AbstractClass>]
+        - ```fsharp
+          [<AbstractClass>]
           type AbstractBaseClass() =
-             abstract member Add: int -> int -> int
-             abstract member Pi : float 
-             abstract member SideLength : float with get,set
+            abstract member Add: int -> int -> int
+            abstract member Pi : float 
+            abstract member SideLength : float with get,set
+          ```
       
       -Overriding methods
-        - [<AbstractClass>]
+        - ```fsharp
+          [<AbstractClass>]
           type Currency() =
             abstract member Symbol: unit -> string 
 
           type Dollar() =
             inherit Currency() 
             override this.Symbol () = "$"
+          ```
              
-        - type Phone() =
+        - ```fsharp
+          type Phone() =
             default this.Cost() = "10"
   
           type ApplePhone() =
             inherit Phone() 
             override this.Cost() = base.Cost() * 3
+          ```
     
     - Interfaces
       -Syntax
-        - type MyInterface =
+        - ```fsharp
+          type MyInterface =
             abstract member Add: int -> int -> int
             abstract member Pi : float
             abstract member SideLength : float with get,set
+          ```
         - Whats the difference between interfaces and abstract classes?
 
       -Implementation
-        - type IAddTaxes =
+        - ```fsharp
+          type IAddTaxes =
             abstract member AddTaxes: decimalt -> decimal -> decimal
 
           type TaxableItem() =
@@ -736,17 +797,21 @@
             interface System.IDisposable with 
                 member this.Dispose() = 
                     printfn "disposed"
+          ```
 
       -Usage
         -The class must be casted to the interface in order to use its method.
-        - let aPhone = TaxableItem()
+        - ```fsharp
+          let aPhone = TaxableItem()
           let phoneTaxer = aPhone :> IAddTaxes      //:> means casting
           phoneTaxer.AddTaxes 10.10 0.15
+          ```
    
-        - let addTaxesService (taxer:IAddTaxes) =
+        - ```fsharp
+          let addTaxesService (taxer:IAddTaxes) =
             printfn "The total cost is %d" <| taxes.AddTaxes 10.10 0.15
           addTaxesServices aPhone
-
+          ```
     
     
   - Type Inference
@@ -758,22 +823,46 @@
         * If there are no constraints anywhere, automatically generalize to generic types
 
         - Look at the literals
-          - let inferredAsInt x = x + 3
-          - let inferredAsString x = x + "3"
-          - let inferredAsDecimal x = x + 3m
+          - ```fsharp
+            let inferredAsInt x = x + 3
+            ```
+          - ```fsharp
+            let inferredAsString x = x + "3"
+            ```
+          - ```fsharp
+            let inferredAsDecimal x = x + 3m
+            ```
         - Look at the functions and other values something interacts with
-          - let indirectlyInferredAsInt x = inferredAsInt x
-          - let aString = "this is a string"
+          - ```fsharp
+            let indirectlyInferredAsInt x = inferredAsInt x
+            ```
+          - ```fsharp
+            let aString = "this is a string"
             let meToo = aString
-          - let inferredAsBool x = if x then 0 else 1
-          - let inferredAsSequenceOfInt x = for i in x do printfn "%i" x
+            ```
+          - ```fsharp
+            let inferredAsBool x = if x then 0 else 1
+            ```
+          - ```fsharp
+            let inferredAsSequenceOfInt x = for i in x do printfn "%i" x
+            ```
         - Look at any explicit type constraints
-          - let inferredAlsoAsInt (x:int) = x
-          - let inferredIndirectlyAlsoAsInt x = inferredAlsoAsInt x
-          - let inferredAsIntDueToPrint x = printf "%i" x 
+          - ```fsharp
+            let inferredAlsoAsInt (x:int) = x
+            ```
+          - ```fsharp
+            let inferredIndirectlyAlsoAsInt x = inferredAlsoAsInt x
+            ```
+          - ```fsharp
+            let inferredAsIntDueToPrint x = printf "%i" x 
+            ```
         - Automatically generalize to generic types
-          - let inferredAsGeneric x = x
-          - let inferredInderectlyAsGeneric x = inferredAsGeneric x
+          - ```fsharp
+            let inferredAsGeneric x = x
+            ```
+          - ```fsharp
+            let inferredInderectlyAsGeneric x = inferredAsGeneric x
+            ```
           
       -Type inference works top-down, bottom-up, front-to-back, back-to-front, etc.
       
@@ -784,39 +873,61 @@
         * Quirks of generic numeric functions
         
         - Declarations out of order
-          - let addTwoNumber x y = addThreeNumbers + y
-          - let addThreeNumbers x y z = x + y +z
+          - ```fsharp
+            let addTwoNumber x y = addThreeNumbers + y
+            ```
+          - ```fsharp
+            let addThreeNumbers x y z = x + y +z
+            ```
           
           - Recursive
-            - let times2 x =
+            - ```fsharp
+              let times2 x =
                 if x = 0 then 1
                 else x * 2
+              ```
                 
-            - let rec times2 x =      //rec needs to be added to indicate recursiveness
+            - ```fsharp
+              let rec times2 x =      //rec needs to be added to indicate recursiveness
                 if x = 0 then 1
                 else x * 2
+              ```
           
           - Simultaneus type
-            - type A = None | AUsesB of B
+            - ```fsharp
+              type A = None | AUsesB of B
               type B = None | BUsesA of A
+              ```
               
-            - type A = None | AUsesB of B       //*and* used for simultaneus declarations.
+            - ```fsharp
+              type A = None | AUsesB of B       //*and* used for simultaneus declarations.
               and B = None | BUsesA of A
+              ```
         
         - Not enough information and can't be generic
-          - let stringLength x = x.Length
+          - ```fsharp
+            let stringLength x = x.Length
+            ```
           
-          - let stringLength (x:string) = x.Length
+          - ```fsharp
+            let stringLength (x:string) = x.Length
+            ```
           
         - Not enough information and can't be generic
-          - let concat x = System.String.Concat(x)
+          - ```fsharp
+            let concat x = System.String.Concat(x)
+            ```
           
-          - let concat (x:string) = System.String.Concat(x)
+          - ```fsharp
+            let concat (x:string) = System.String.Concat(x)
+            ```
           
         - Quirks of generic numeric functions
-          - let times2 x = x * 2
+          - ```fsharp
+            let times2 x = x * 2
             times2 3                //Assumes times2 is int
             times2 3.3              //Error
+            ```
             
         -Solutions:
           - Define things before they are used.
@@ -830,10 +941,12 @@
       - `match`..`with`
         
     - Match.
-      - match [something] with 
+      - ```fsharp
+        match [something] with 
         | pattern1 -> expression1
         | pattern2 -> expression2
         | pattern3 -> expression3
+        ```
         - Note: It looks like a series of lamba expressions where each one has exactly one parameter.
           So, it can be seen as a choice between a set of lambda expressions.
           Each choice is deffined by the first pattern that matches the expression.
