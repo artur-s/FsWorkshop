@@ -282,7 +282,7 @@
         ```fsharp
         let tuple2 = ("Hola!", true)    //Signature: string * bool
         ```
-       - ```fsharp
+        ```fsharp
         let tuple4 = ("Bob", 42, true)
         ```
         ```fsharp
@@ -744,7 +744,7 @@
         - A defaul implementation of the method must be privded; or
         - Mark the class *abstract* as a whole.
           
-      -Default implementations
+      - Default implementations
           ```fsharp
           type BaseClass() =
             abstract member Add: int -> int -> int
