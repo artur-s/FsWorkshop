@@ -13,10 +13,14 @@
     - Functions. Parameters are in no need of parenthesis, but it needed for precedence.
       - Signature
       - `val functionName : domain -> range`
-      - let square x = x * x
+        ```fsharp
+        let square x = x * x
         square 3
-      - let add x y = x + y
+        ```
+        ```fsharp
+        let add x y = x + y
         add 1 2
+        ```
       - Multiline functions. Indentation is important.
           ```fsharp
           let odds list =
@@ -32,30 +36,36 @@
   - Currying
     - A function with multiple parameters is rewritten as a series of new tions, each with only one parameter.
     - Done automatically by the compiler
-    
-    - let add x y =
+      
+      ```fsharp
+      let add x y =
         x + y
       // Curried version. Note the one parameter per function
       let add x =
         let subFunction y =
           x + y
         subFunction
+      ```
         
     - Signature
-      val add : int -> (int -> int)
-      val add : int -> int -> int
+      `val add : int -> (int -> int)`
+      `val add : int -> int -> int`
       
-      int->string->bool->int      ?
-      (int->string)->int          ?
-      (int->string)->(int->bool)  ?
+      `int->string->bool->int`      ?
+      `(int->string)->int`          ?
+      `(int->string)->(int->bool)`  ?
         
   - Partial application
     - Fixing the first N parameters of the function, gets a function of the ining parameters.
     
-    - let printer = printfn "printing param=%i" 
+      ```fsharp
+      let printer = printfn "printing param=%i" 
       printer 3
-    - let add3 = (+) 3
+      ```
+      ```fsharp
+      let add3 = (+) 3
       add3 1
+      ```
       
     - Order matters:
       1. First: Parameters more likely to be static
@@ -63,11 +73,13 @@
       3. For well-known operations such as “subtract”, put in the expected order
       
       - List
-        - List-function [function parameter(s)] [list]
-          - List.filter isOdd list
-          - List.map (fun i -> i+1) [0;1;2;3]
-          - let eachAdd1 = List.map (fun i -> i+1) 
+        - `List-function [function parameter(s)] [list]`
+          - `List.filter isOdd list`
+          - `List.map (fun i -> i+1) [0;1;2;3]`
+          - ```fsharp
+            let eachAdd1 = List.map (fun i -> i+1) 
             eachAdd1 [0;1;2;3]
+            ```
             
   - Pipelining
     - Signature
