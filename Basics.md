@@ -2,7 +2,10 @@
 
   - function signature
     - Values
-      - Signature. val aName: type = constant.
+      - Signature. 
+        ```fsharp
+        val aName: type = constant.
+        ```
       
       - The `let` keyword defines an (immutable) value. No types needed
         ```fsharp
@@ -12,7 +15,9 @@
         ```
     - Functions. Parameters are in no need of parenthesis, but it needed for precedence.
       - Signature
-      - `val functionName : domain -> range`
+        ```fsharp
+        val functionName : domain -> range`
+        ```
         ```fsharp
         let square x = x * x
         square 3
@@ -48,12 +53,14 @@
       ```
         
     - Signature
-      -`val add : int -> (int -> int)`
-      -`val add : int -> int -> int`
+      ```fsharp
+      val add : int -> (int -> int)
+      val add : int -> int -> int
+      ```
       
-      -`int->string->bool->int`      ?
-      -`(int->string)->int`          ?
-      -`(int->string)->(int->bool)`  ?
+      - `int->string->bool->int`      ?
+      - `(int->string)->int`          ?
+      - `(int->string)->(int->bool)`  ?
         
   - Partial application
     - Fixing the first N parameters of the function, gets a function of the ining parameters.
@@ -74,36 +81,37 @@
       
       - List
         - `List-function [function parameter(s)] [list]`
-          - ```fsharp
-            List.filter isOdd list
-            ```
-          - ```fsharp
-            List.map (fun i -> i+1) [0;1;2;3]
-            ```
-          - ```fsharp
-            let eachAdd1 = List.map (fun i -> i+1) 
-            eachAdd1 [0;1;2;3]
-            ```
+          ```fsharp
+          List.filter isOdd list
+          ```
+          ```fsharp
+          List.map (fun i -> i+1) [0;1;2;3]
+          ```
+          ```fsharp
+          let eachAdd1 = List.map (fun i -> i+1) 
+          eachAdd1 [0;1;2;3]
+          ```
             
   - Pipelining
     - Signature
-      - `let (|>) x f = f x`
+      ```fsharp
+      let (|>) x f = f x
+      ```
     
     - It allows to put the function argument in front of the function rather after.
     - You can pipe the output of one operation to the next using "|>"
     - From Partial application ordering, having the data structure at the end
       makes it easier to pipe a structure or collection from function to tion. 
-    - ```fsharp
+      ```fsharp
       let result = 
         [1..10]
         |> List.map (fun i -> i+1)
         |> List.filter (fun i -> i>5)
       ```
-    
-    - ```fsharplet add3Numbers x y z = x+y+z
+      ```fsharplet add3Numbers x y z = x+y+z
       add3Numbers 1 2 3
       ```
-    - ```fsharp
+      ```fsharp
       let add3NumbersPartial = add3Numbers 1 2
       add3NumbersPartial 3
       3 |> add3NumbersPartial
@@ -111,19 +119,21 @@
       ```
       
     - Reverse pipe function
-      - `let (<|) f x = f x`
+      ```fsharp
+      let (<|) f x = f x
+      ```
       - It reduces the need for parentheses and can make the code cleaner.
       
-      - ```fsharp
+        ```fsharp
         printf "%i" 1+2          // error
         ```
-      - ```fsharp
+        ```fsharp
         printf "%i" (1+2)        // using parens
         ```
-      - ```fsharp
+        ```fsharp
         printf "%i" <| 1+2       // using reverse pipe
         ```
-      - ```fsharp
+        ```fsharp
         let add x y = x + y
         1+2 |> add <| 3+4
         ```
@@ -178,7 +188,9 @@
       add3Multiply2 5
       ```
     - Reverse composition
-      - `let (<<) f g x = g ( f(x) )`
+      ```fsharp
+      let (<<) f g x = g ( f(x) )
+      ```
       - Used mainly to make code more like English
       
       ```fsharp
@@ -197,103 +209,104 @@
       * As domains for functions to act upon. It is a sort of data modeling tool that allows to represent a real world domain in code.
       * The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the “compile time unit tests” work. In the ideal scenario, if your program compiles, then it really is correct!
     - All tpes definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
-      - ```fsharp
-        type A = int
-        ```
-      - ```fsharp
-        type B = int * int
-        ```
-      - ```fsharp
-        type C = {FirstName:string; LastName:string}
-        ```
-      - ```fsharp
-        type D = Square of int | Rectangle of int * int
-        ```
-      - ```fsharp
-        type E<'a> = AChoice of 'a | OtherChoice of 'a * 'a 
-        ```
+      ```fsharp
+      type A = int
+      ```
+      ```fsharp
+      type B = int * int
+      ```
+      ```fsharp
+      type C = {FirstName:string; LastName:string}
+      ```
+      ```fsharp
+      type D = Square of int | Rectangle of int * int
+      ```
+      ```fsharp
+      type E<'a> = AChoice of 'a | OtherChoice of 'a * 'a 
+      ```
     - They can only be declared in namespaces or modules.
     - Can't be declared inside functions.
     
     - Constructing types
-      - ```fsharp
-        let a = 3
-        ```
-      - ```fsharp
-        let b = (6, 39)
-        ```
-      - ```fsharp
-        let c = {FirstName="Grzegorz"; LastName="Brzęczyszczykiewicz"
-        ```
-      - ```fsharp
-        let d = Rectangle (5, 6)
-        ```
-      - ```fsharp
-        let e = AChoice "this choice"
-        ```
+      ```fsharp
+      let a = 3
+      ```
+      ```fsharp
+      let b = (6, 39)
+      ```
+      ```fsharp
+      let c = {FirstName="Grzegorz"; LastName="Brzęczyszczykiewicz"
+      ```
+      ```fsharp
+      let d = Rectangle (5, 6)
+      ```
+      ```fsharp
+      let e = AChoice "this choice"
+      ```
     - Deconstructing types
-      - ```fsharp
-        let (b1, b2) = (6, 39)
-        ```
-      - ```fsharp
-        let { FirstName = c1 } = c
-        ```
-      - ```fsharp
-        match d with
-        | Square d1 -> printf "Square with sides %i" d1
-        | Rectangle (d1, d2) -> printf "Rectangle with sides %i %i" d1 d2
-        ```
+      ```fsharp
+      let (b1, b2) = (6, 39)
+      ```
+      ```fsharp
+      let { FirstName = c1 } = c
+      ```
+      ```fsharp
+      match d with
+      | Square d1 -> printf "Square with sides %i" d1
+      | Rectangle (d1, d2) -> printf "Rectangle with sides %i %i" d1 d2
+      ```
     
     - Abbreviations or aliases
-      - `type [name] = [existingType]`
-      - ```fsharp
-        type PaymentMethodId = int
-        ```
-      - ```fsharp
-        type CustomerId = Guid
-        ```
-      - ```fsharp
-        type CustomerPaymentMethod = PaymentMethodId * CustomerId
-        ```
-      -They provide documentation.
-      -Decoupling between usage and the implementation of a type.
-      -Its not really a new type, just an alias.
+      ```fsharp
+      type [name] = [existingType]
+      ```
+      ```fsharp
+      type PaymentMethodId = int
+      ```
+      ```fsharp
+      type CustomerId = Guid
+      ```
+      ```fsharp
+      type CustomerPaymentMethod = PaymentMethodId * CustomerId
+      ```
+      - They provide documentation.
+      - Decoupling between usage and the implementation of a type.
+      - Its not really a new type, just an alias.
 
     - Tuples
-      -Imagine the Cartesian product of two collections. Each combination is expressed as (a1, b1), (a1, b2), ..., (a2, b1)
-      -Hence the type signature that they do.
-      - ```fsharp
+      - Imagine the Cartesian product of two collections. Each combination is expressed as (a1, b1), (a1, b2), ..., (a2, b1)
+      - Hence the type signature that they do.
+        ```fsharp
         let tuple1 = (3, 9)             //Signature: int * int
         ```
-      - ```fsharp
+        ```fsharp
         let tuple2 = ("Hola!", true)    //Signature: string * bool
         ```
-      - ```fsharp
+       - ```fsharp
         let tuple4 = ("Bob", 42, true)
         ```
-      - ```fsharp
+        ```fsharp
         let tuple5 = 1, 2, 3            //Note that parenthesis doesn't matter.
         ```
-      - ```fsharp
+        ```fsharp
         type PersonalPayment = Person * PaymentMethod
         ```
-      -Tuples are single objects.
-      -Order matters -> `int*bool` not the same as `bool*int`
-      -The comma is the most important of tuples.
-      - ```fsharp
+      - Tuples are single objects.
+      - Order matters -> `int*bool` not the same as `bool*int`
+      - The comma is the most important of tuples.
+        ```fsharp
         let t = 3, 6    //Constructing
         ```
-      - ```fsharp
+        ```fsharp
         let t1, t2 = t  //Deconstructing
         ```
-      - ```fsharp
+        ```fsharp
         let t1, _ = t   //Underscore means "whatever"
         ```
-      
-      - ```fsharp
+        ```fsharp
         let t1 = fst t  //fst extracts the first element
         ```
-      - ```fsharp
+        ```fsharp
         let t2 = snd t  //snd extracts the second element.
         ```
       
@@ -305,15 +318,15 @@
       - `(1,2) = (1,2,3)`           ?
       
       -Printing
-      - ```fsharp
+        ```fsharp
         printf "%s" t1.ToString()
         ```
-      - ```fsharp
+        ```fsharp
         printf "%O" t1
         ```
 
     - Records
-      -Records are tuples where each element is labeled.
+      - Records are tuples where each element is labeled.
       ```fsharp
         type Person = {firstName: string; lastName: string}
         let aPerson = {firstName = "Juan"; lastName: "Perez"}     //What are the differences?
@@ -325,49 +338,48 @@
         let lastName = aPerson.lastName
       ```
       
-      -Order doesn't matter
+      - Order doesn't matter
       ```fsharp
         let bPerson = {lastName = "Perez"; firstName = "Juan"}
         aPerson = bPerson
       ```
       
-      -Records might have same structure.
+      - Records might have same structure.
         ```fsharp
         let Customer = {firstName: string; lastName: string}
         let aDude = {firstName = "John"; lastName = "Johnson"}     //What type is aDude?
         ```
-      -To break ambiguity, add the type name to at least one of the labels.
+      - To break ambiguity, add the type name to at least one of the labels.
         ```fsharp
         let aCustomer = {Customer.firstName="John", lastName="Johnson"}
         ```
       
-      -Note that in F#, unlike some other functional languages, two types with exactly the same structural definition are not the same type. Two types are only equal if they have the same name.
+      - Note that in F#, unlike some other functional languages, two types with exactly the same structural definition are not the same type. Two types are only equal if they have the same name.
       
-      -With
+      - `with`
         ```fsharp
         let aCustomerChild = {aCustomer with firstName="Little Johnny"}
         ```
       
-      -Printing
+      - Printing
         ```fsharp
         printfn "%A" aCustomer  //Nice representation
         printfn "%O" aCustomer  //Not nice
         ```
       
     - Discriminated Unions
-      -While tuples and records are types of multiplication, Discriminated Unions are types of addition.
-      -Each component is called *union case*, and each one contains a *case identifier* or *tag*. Each *tag* must start with upper case.
-      -Disciminated Unions are type safe, and data can only be accessed one way.
-      - ```fsharp
+      - While tuples and records are types of multiplication, Discriminated Unions are types of addition.
+      - Each component is called *union case*, and each one contains a *case identifier* or *tag*. Each *tag* must start with upper case.
+      - Disciminated Unions are type safe, and data can only be accessed one way.
+        ```fsharp
         type IntOrBool =    //IntOrBool is the sum of all Integer or Boolean
         | Integer of int
         | Boolean of bool 
         ```
-      - ```fsharp
+        ```fsharp
         type IntOrBool = Integers of int | Booleans of bool   //Note: vertical bar is only option before the first component.
         ```
-      
-      - ```fsharp
+        ```fsharp
         type AnyType =
         | Customer of Customer       //Labels can have the same name of the component type. Common, used as documentation.
         | ATuple of int * string
@@ -375,26 +387,26 @@
         | AnEmptyCase     //No need for a type.
         ```
         
-      -Construction
-      - ```fsharp
+      - Construction
+        ```fsharp
         let anInt = Integer 33
         ```
-      - ```fsharp
+        ```fsharp
         let aBool = Boolean false
         ```
-      - ```fsharp
+        ```fsharp
         let aCustomer = Customer {firstName = "Bob"; lastName = "Bobson"}
         ```
-      - ```fsharp
+        ```fsharp
         let anEmptyCase = AnEmptyCase
         ```
-      - ```fsharp
+        ```fsharp
         let aFewSquares = 
           [1..5]
           |> List.map Square
         ```
       
-      -Naming conflicts
+      - Naming conflicts
         ```fsharp
         type OtherIntOrBool = Integer of Int | Boolean of bool
         let aValue = Integer 3      //? which type is it?
@@ -402,8 +414,8 @@
         let otherValue = OtherIntOrBool.Integer 52
         ```
         
-      -Deconstruction with *match*
-      - ```fsharp
+      - Deconstruction with *match*
+        ```fsharp
         let intOrBool x =
           match x wtih
           | Integer i -> printfn "This is an int! %i" i
@@ -413,10 +425,10 @@
         intOrBool anInt
         ```
       
-      -Single cases
-        -Useful practice to enforce type safety.
+      - Single cases
+        - Useful practice to enforce type safety.
         
-        - ```fsharp
+          ```fsharp
           type CustomerId = int   // What is this called?
           let printCustomerId (customerId:CustomerId) =
             printfn ("This is the customerId %i" customerId)
@@ -437,25 +449,25 @@
           type SingleEmptyCase = | EmptyCase      //Note: vertical bar must be present.
           ```
         
-      -Equality
-        -Two unions are equal if they have the same type, the same case and the values for that case are equal.
-        - ```fsharp
+      - Equality
+        - Two unions are equal if they have the same type, the same case and the values for that case are equal.
+          ```fsharp
           type PaymentMethod = Cash of decimal | Debit of DebitCard
           let aCashPayment = Cash 438.72
           let otherCashPayment = Cash 438.72
           let areEqual = (aCashPayment = otherCashPayment)
           ```
       
-      -Printing
-      - ```fsharp
+      - Printing
+        ```fsharp
         printfn "%A" aCashPayment  //Nice representation
         printfn "%O" otherCashPayment  //Not nice
         ```
 
     - Object expressions
-      -It allows to implement an interface on-the-fly, without having to create a class.
+      - It allows to implement an interface on-the-fly, without having to create a class.
       
-      - ```fsharp
+        ```fsharp
         let createResource name =
           { new System.IDisposable
             with member this.Dispose() = printfn "%A disposed" name }
@@ -468,13 +480,12 @@
         ```
           
     - Option.
-      - ```fsharp
+        ```fsharp
         type Option<'a> =
           | Some of 'a
           | None
         ```
-      
-      - ```fsharp
+        ```fsharp
         let someInt = Some 2    //Constructor
         let noInt = None
         
@@ -483,31 +494,30 @@
         | None -> printfn "No value"
         ```
         
-      -Defining option type.
-        - ```fsharp
-          type MiddleName = Option<string>
-          ```
-        - ```fsharp
-          type PhoneNumber = string option
-          ```
-      
+      - Defining option type.
+        ```fsharp
+        type MiddleName = Option<string>
+        ```
+        ```fsharp
+        type PhoneNumber = string option
+        ```
         - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
         - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
 
       -Printing
-        - ```fsharp
-          let middleName = MiddleName "Dolores"
-          printfn "%A" middleName  //Nice representation
-          printfn "%O" middleName  //Also nice
-          ```
+        ```fsharp
+        let middleName = MiddleName "Dolores"
+        printfn "%A" middleName  //Nice representation
+        printfn "%O" middleName  //Also nice
+        ```
       
-      -WARNING:
-        -Using `IsSome`, `IsNone` and `Value` should be avoided. Using pattern matching instead. 
-         Why?
+      - WARNING:
+        - Using `IsSome`, `IsNone` and `Value` should be avoided. Using pattern matching instead. 
+          Why?
          
-      -Option module
-        -map
-          - ```fsharp
+      - Option module
+        - `map`
+            ```fsharp
             let aCost = Some 123.32
             let aTax = 0.15
             let addTaxes =
@@ -520,8 +530,8 @@
               |> Option.map (fun c -> c + c * aTax)
             ```
           
-        -fold
-          - ```fsharp
+        - `fold`
+            ```fsharp
             let amountToPay quantity =
             match addTaxes with
             | Some x -> x * quantity
@@ -532,36 +542,36 @@
             ```
 
     - Classes
-      -They always have parantheses after the class name.
-      -Must have functions attached to them as members.
-      - ```fsharp
+      - They always have parantheses after the class name.
+      - Must have functions attached to them as members.
+        ```fsharp
         type CustomerName(firstName, middleInitial, lastName) =   //Note that no parameters type is needed
           member this.FirstName = firstName           //`this` could be any identifier you want. Just needs to be consistent
           member this.MiddleInitial = middleInitial
           member this.LastName = lastName 
         ```
-      - ```fsharp
+        ```fsharp
         type CustomerName(firstName:string, middleInitial:string option, lastName:string) =
           member this.FirstName = firstName
           member this.MiddleInitial = middleInitial
           member this.LastName = lastName
         ```
-      - ```fsharp
+        ```fsharp
         type CustomerName(firstName:string, middleNames:(string * string) option, lastName:string) =
           member this.FirstName = firstName
           member this.MiddleNames = middleNames
           member this.LastName = lastName
         ```
           
-      -Signature
-        -Given:
-        - ```fsharp
+      - Signature
+        - Given:
+          ```fsharp
           type ASquare(length:int, name:string) = 
             member this.Area = length * length
             member this.Rotate angle times = angle * times
           ```
-        -Its signature would be:
-        - ```fsharp
+        - Its signature would be:
+          ```fsharp
           type ASquare =
             class
               new : length:int * name:string -> ASquare       //constructor signature. Always called `new`
@@ -569,8 +579,8 @@
               member Rotate : angle:int -> times:int -> int   //method signature
             end
           ```
-      -Optional private fields and functions.
-        - ```fsharp
+      - Optional private fields and functions.
+          ```fsharp
           type ASquare(length:int, name:string) =
             let mutable mutableColor = "red"                 //private mutable value
             let scaleUp scale = length * scale               //private function
@@ -586,8 +596,8 @@
           aSquaritoInstance.SetMutableColor "purple"
           ```
           
-      -Mutable constructor parameters
-        - ```fsharp
+      - Mutable constructor parameters
+          ```fsharp
           type AMutableSquare(length:int, name:string) =
             let mutable mutableLength = length
             
@@ -595,8 +605,8 @@
               mutableLength <- length
           ```
               
-      -Extra constructor behaviour
-        - ```fsharp
+      - Extra constructor behaviour
+          ```fsharp
           type ASquare(length:int, name:string) as this =               //Note the `this`, only needed for `PrintMyArea`
             let mutable mutableColor = "red" 
             do printfn "My name is %s and my color is %s" name color    //This is a good way of extra behaviour
@@ -610,8 +620,8 @@
           new ASquare(65, "Your name")
           ```
           
-      -Methods
-        - ```fsharp
+      - Methods
+          ```fsharp
           type CustomerName(firstName, middleInitial, lastName) =
             member this.FirstName = firstName
             member this.MiddleInitial = middleInitial
@@ -629,31 +639,31 @@
           aCustomer.GreetPerson "Joe"
           ```
           
-        -Curried vs Tuple
-          - ```fsharp
-            type CurriedVsTuple() =
-              member this.CurriedAdd x y =
-                x + y
-              
-              member this.TupleAdd(x,y) =
-                x + y
-            
-            let test = new CurriedVsTuple()
-            printfn "%i" <| tc.CurriedAdd 1 2
-            printfn "%i" <| tc.TupleAdd(1,2)
-            ```
-            
-          -The advantages of tuple form are:
-           * Compatible with other .NET code
-           * Supports named parameters and optional parameters
-           * Supports method overloads
-          -The disadvantages of tuple form are:
-           * Doesn’t support partial application
-           * Doesn’t work well with higher order functions
-           * Doesn’t work well with type inference
+      - Curried vs Tuple
+          ```fsharp
+          type CurriedVsTuple() =
+            member this.CurriedAdd x y =
+              x + y
+
+            member this.TupleAdd(x,y) =
+              x + y
+
+          let test = new CurriedVsTuple()
+          printfn "%i" <| tc.CurriedAdd 1 2
+          printfn "%i" <| tc.TupleAdd(1,2)
+          ```
+
+        - The advantages of tuple form are:
+         * Compatible with other .NET code
+         * Supports named parameters and optional parameters
+         * Supports method overloads
+        - The disadvantages of tuple form are:
+         * Doesn’t support partial application
+         * Doesn’t work well with higher order functions
+         * Doesn’t work well with type inference
           
-      -Mutable properties
-        - ```fsharp
+      - Mutable properties
+          ```fsharp
           type ASquare(length) = 
             let mutable length = length
 
@@ -665,8 +675,8 @@
             member val Color = "Red" with get, set
           ```
             
-      -Secondary constructors
-        - ```fsharp
+      - Secondary constructors
+          ```fsharp
           type ASquare(length, name) = 
             new(length) = 
                 ASquare(length,"NoName") 
@@ -674,9 +684,9 @@
                 ASquare(length,"NoName") 
           ```
                 
-      -Static
-        -Members
-          - ```fsharp
+      - Static
+        - Members
+            ```fsharp
             type ASquare(length, name) = 
               member this.Length = length
               static member NumberOfSides = 4       //Note: There is no `this`.
@@ -686,56 +696,56 @@
             printfn "The number of sides of a square is %i" ASquare.NumberOfSides
             ```
             
-      -Constructors
-        -No static constructors in F#. But it can be emulated.
-        - ```fsharp
+      - Constructors
+        - No static constructors in F#. But it can be emulated.
+          ```fsharp
           type StaticConstructor() =
             static let rand = new System.Random()
             static do printfn "This can be any other `do`"
             member this.GetRand() = rand.Next()
           ```
               
-      -Accesibility
-        -All class members are public by default.
-        -`public`, `internal`, `private`
+      - Accesibility
+        - All class members are public by default.
+        - `public`, `internal`, `private`
 
-        - ```fsharp
+          ```fsharp
           type CustomerName(firstName, middleInitial, lastName) =
             member private this.FirstName = firstName
             member internal this.MiddleInitial = middleInitial
             member this.LastName = lastName
           ```
             
-      -Interop
-        -Best to define them in a namespace instead of a module, since modules are exposed as static classes, and classes inside of module are then defined as nested classes inside the static class.
+      - Interop
+        - Best to define them in a namespace instead of a module, since modules are exposed as static classes, and classes inside of module are then defined as nested classes inside the static class.
         
 
     - Inheritance and abstact classes
-      -Syntax
-        - ```fsharp
+      - Syntax
+          ```fsharp
           type DerivedClass(param1, param2) =
             inherit BaseClass(param1)           //Note it contains the name of the class and constructor already
           ```
             
-      -Abstract and virtual methods
-        - ```fsharp
+      - Abstract and virtual methods
+          ```fsharp
           type BaseClass() =
             abstract member Add: int -> int -> int    // What is the concrete function?
           ```
           
-      -Abstract properties
-        - ```fsharp
+      - Abstract properties
+          ```fsharp
           type BaseClass() =
             abstract member Pi : float
             abstract SideLength : int with get, set
           ```
             
-      -However abstract definitions alone won't compile. In order to fix this:
-        -A defaul implementation of the method must be privded; or
-        -Mark the class *abstract* as a whole.
+      - However abstract definitions alone won't compile. In order to fix this:
+        - A defaul implementation of the method must be privded; or
+        - Mark the class *abstract* as a whole.
           
       -Default implementations
-        - ```fsharp
+          ```fsharp
           type BaseClass() =
             abstract member Add: int -> int -> int
             abstract member Pi : float 
@@ -745,8 +755,8 @@
             default this.Pi = 3.1415
           ```
             
-      -Abstract classes
-        - ```fsharp
+      - Abstract classes
+          ```fsharp
           [<AbstractClass>]
           type AbstractBaseClass() =
             abstract member Add: int -> int -> int
@@ -754,8 +764,8 @@
             abstract member SideLength : float with get,set
           ```
       
-      -Overriding methods
-        - ```fsharp
+      - Overriding methods
+          ```fsharp
           [<AbstractClass>]
           type Currency() =
             abstract member Symbol: unit -> string 
@@ -764,8 +774,7 @@
             inherit Currency() 
             override this.Symbol () = "$"
           ```
-             
-        - ```fsharp
+          ```fsharp
           type Phone() =
             default this.Cost() = "10"
   
@@ -775,8 +784,8 @@
           ```
     
     - Interfaces
-      -Syntax
-        - ```fsharp
+      - Syntax
+          ```fsharp
           type MyInterface =
             abstract member Add: int -> int -> int
             abstract member Pi : float
@@ -784,8 +793,8 @@
           ```
         - Whats the difference between interfaces and abstract classes?
 
-      -Implementation
-        - ```fsharp
+      - Implementation
+          ```fsharp
           type IAddTaxes =
             abstract member AddTaxes: decimalt -> decimal -> decimal
 
@@ -799,15 +808,15 @@
                     printfn "disposed"
           ```
 
-      -Usage
-        -The class must be casted to the interface in order to use its method.
-        - ```fsharp
+      - Usage
+        - The class must be casted to the interface in order to use its method.
+          ```fsharp
           let aPhone = TaxableItem()
           let phoneTaxer = aPhone :> IAddTaxes      //:> means casting
           phoneTaxer.AddTaxes 10.10 0.15
           ```
    
-        - ```fsharp
+          ```fsharp
           let addTaxesService (taxer:IAddTaxes) =
             printfn "The total cost is %d" <| taxes.AddTaxes 10.10 0.15
           addTaxesServices aPhone
@@ -816,178 +825,173 @@
     
   - Type Inference
     - Based on an algorithm called "Hindley-Milner".
-      -Rules
+      - Rules
         * Look at the literals
         * Look at the functions and other values something interacts with
         * Look at any explicit type constraints
         * If there are no constraints anywhere, automatically generalize to generic types
 
         - Look at the literals
-          - ```fsharp
+            ```fsharp
             let inferredAsInt x = x + 3
             ```
-          - ```fsharp
+            ```fsharp
             let inferredAsString x = x + "3"
             ```
-          - ```fsharp
+            ```fsharp
             let inferredAsDecimal x = x + 3m
             ```
         - Look at the functions and other values something interacts with
-          - ```fsharp
+            ```fsharp
             let indirectlyInferredAsInt x = inferredAsInt x
             ```
-          - ```fsharp
+            ```fsharp
             let aString = "this is a string"
             let meToo = aString
             ```
-          - ```fsharp
+            ```fsharp
             let inferredAsBool x = if x then 0 else 1
             ```
-          - ```fsharp
+            ```fsharp
             let inferredAsSequenceOfInt x = for i in x do printfn "%i" x
             ```
         - Look at any explicit type constraints
-          - ```fsharp
+            ```fsharp
             let inferredAlsoAsInt (x:int) = x
             ```
-          - ```fsharp
+            ```fsharp
             let inferredIndirectlyAlsoAsInt x = inferredAlsoAsInt x
             ```
-          - ```fsharp
+            ```fsharp
             let inferredAsIntDueToPrint x = printf "%i" x 
             ```
         - Automatically generalize to generic types
-          - ```fsharp
+            ```fsharp
             let inferredAsGeneric x = x
             ```
-          - ```fsharp
+            ```fsharp
             let inferredInderectlyAsGeneric x = inferredAsGeneric x
             ```
           
-      -Type inference works top-down, bottom-up, front-to-back, back-to-front, etc.
+      - Type inference works top-down, bottom-up, front-to-back, back-to-front, etc.
       
-      -Sometimes it fails to know:
+      - Sometimes it fails to know:
         * Declarations out of order
         * Not enough information
         * Overloaded methods
         * Quirks of generic numeric functions
         
         - Declarations out of order
-          - ```fsharp
-            let addTwoNumber x y = addThreeNumbers + y
-            ```
-          - ```fsharp
-            let addThreeNumbers x y z = x + y +z
-            ```
+          ```fsharp
+          let addTwoNumber x y = addThreeNumbers + y
+          ```
+          ```fsharp
+          let addThreeNumbers x y z = x + y +z
+          ```
           
           - Recursive
-            - ```fsharp
-              let times2 x =
-                if x = 0 then 1
-                else x * 2
-              ```
-                
-            - ```fsharp
-              let rec times2 x =      //rec needs to be added to indicate recursiveness
-                if x = 0 then 1
-                else x * 2
-              ```
+            ```fsharp
+            let times2 x =
+              if x = 0 then 1
+              else x * 2
+            ```
+            ```fsharp
+            let rec times2 x =      //rec needs to be added to indicate recursiveness
+              if x = 0 then 1
+              else x * 2
+            ```
           
           - Simultaneus type
-            - ```fsharp
-              type A = None | AUsesB of B
-              type B = None | BUsesA of A
-              ```
-              
-            - ```fsharp
-              type A = None | AUsesB of B       //*and* used for simultaneus declarations.
-              and B = None | BUsesA of A
-              ```
+            ```fsharp
+            type A = None | AUsesB of B
+            type B = None | BUsesA of A
+            ```
+            ```fsharp
+            type A = None | AUsesB of B       //*and* used for simultaneus declarations.
+            and B = None | BUsesA of A
+            ```
         
         - Not enough information and can't be generic
-          - ```fsharp
-            let stringLength x = x.Length
-            ```
-          
-          - ```fsharp
-            let stringLength (x:string) = x.Length
-            ```
+          ```fsharp
+          let stringLength x = x.Length
+          ```
+          ```fsharp
+          let stringLength (x:string) = x.Length
+          ```
           
         - Not enough information and can't be generic
-          - ```fsharp
-            let concat x = System.String.Concat(x)
-            ```
-          
-          - ```fsharp
-            let concat (x:string) = System.String.Concat(x)
-            ```
+          ```fsharp
+          let concat x = System.String.Concat(x)
+          ```
+          ```fsharp
+          let concat (x:string) = System.String.Concat(x)
+          ```
           
         - Quirks of generic numeric functions
-          - ```fsharp
-            let times2 x = x * 2
-            times2 3                //Assumes times2 is int
-            times2 3.3              //Error
-            ```
+          ```fsharp
+          let times2 x = x * 2
+          times2 3                //Assumes times2 is int
+          times2 3.3              //Error
+          ```
             
-        -Solutions:
+        - Solutions:
           - Define things before they are used.
           - Declare first known types.
           - Annotate all and then remove one by one until the minimum is achieved.
     
   - Pattern Matching
-    -It is ubiquitous in F#:
+    - It is ubiquitous in F#:
       - Used for binding expressions with `let`
       - Function parameters
       - `match`..`with`
         
     - Match.
-      - ```fsharp
+        ```fsharp
         match [something] with 
         | pattern1 -> expression1
         | pattern2 -> expression2
         | pattern3 -> expression3
         ```
-        - Note: It looks like a series of lamba expressions where each one has exactly one parameter.
-          So, it can be seen as a choice between a set of lambda expressions.
-          Each choice is deffined by the first pattern that matches the expression.
-          _Order is important_ (unlike `switch`)
+      - Note: It looks like a series of lamba expressions where each one has exactly one parameter.
+        So, it can be seen as a choice between a set of lambda expressions.
+        Each choice is deffined by the first pattern that matches the expression.
+        _Order is important_ (unlike `switch`)
                     
-      - ```fsharp
+        ```fsharp
         let x =
           match "a" with
           | "a" -> 1
           | "b" -> 2
           | _ -> 999
         ```
-          
-      - ```fsharp
+        ```fsharp
         let x =
           match "a" with
           | _ -> 999
           | "a" -> 1
           | "b" -> 2
         ```
-      -`match`..`with` is an expression; thus, all branches mush evaluate to the same type
-        - ```fsharp
+      - `match`..`with` is an expression; thus, all branches mush evaluate to the same type
+          ```fsharp
           let x y =
             match y with
             | "a" -> 1
             | "b" -> "letre"
             | _ -> false
           ```
-      -Since it is an expression it can nested, embedded in a lambda, etc.
+      - Since it is an expression it can nested, embedded in a lambda, etc.
       
-      -Formatting suggestions
+      - Formatting suggestions
         - Alignment of `| expression` should be directly under `match`
         - `match`..`with` should be on a new line
         - The expression after `->` should be on a new line when expression is long.
         
-      -Exhaustive matching
-        -There must always be a branch that matches.
+      - Exhaustive matching
+        - There must always be a branch that matches.
           -Compiler will warn about it. (Sometimes unnecessarily, in which a `_` can be used. Be sure to document why its being used)
           -If ignored and unmatched, a `MatchFailureException` will be thrown.
-        -Avoid using wildcard, specially in union types. This will help catching errors when a new case is added to the union.
-          - ```fsharp
+        - Avoid using wildcard, specially in union types. This will help catching errors when a new case is added to the union.
+            ```fsharp
             type PaymentMethods = Cash | Debit | Credit
             let pay paymentMethod =
               match paymentMethod with
@@ -998,14 +1002,14 @@
             ```
               
       - Binding to value
-        - ```fsharp
+          ```fsharp
           let x =
             match ("a", "b") with
             | (y, "b") -> printfn "y=%0" y
             | ("a", z) -> printfn "z=%0" z
           ```
       - Logical
-        - ```fsharp
+          ```fsharp
           let validatePaymentMethodForCashBack (paymentMethod, overpaid, overpaidEnabled) =
             match (paymentMethod, overpaid, overpaidEnabled) with
             | (_ , false, _ ) -> true
@@ -1014,16 +1018,15 @@
                 -> failwith (sprintfn "%A is not configured for overpayments x)
           ```
       - On lists
-        -Lists can be matched explicitly in the form [x;y;z] or in the “cons” form head::tail.
-        - ```fsharp
+        - Lists can be matched explicitly in the form [x;y;z] or in the “cons” form head::tail.
+          ```fsharp
           let y =
             match [1; 2; 3] with
             | [1;x;y] -> printfn "x=%i y=%i" x y      //Square brackets needed
             | 1::tail -> printfn "tail=%A" tail       //No square brackets
             | [] -> printfn "empty"
           ```
-          
-        - ```fsharp
+          ```fsharp
           let rec loopAndSum aList sumSoFar = 
             match aList with
             | [] -> 
@@ -1033,7 +1036,7 @@
                 loopAndSum xs newSumSoFar
           ```
       - On Tuples
-        - ```fsharp
+          ```fsharp
           let aTuple = (32, false)
           match aTuple with
           | (32, _ ) -> printfn "Matched in 32"
@@ -1042,7 +1045,7 @@
           ```
           
       - On Record
-        - ```fsharp
+          ```fsharp
           type Customer = {FirstName:string; LastName:string}
           let aCustomer = {FirstName:"Clinton"; LastName:"Adams"}
           match aCustomer with
@@ -1052,7 +1055,7 @@
           ```
           
       - On Union
-        - ```fsharp
+          ```fsharp
           type PaymentType = Cash of decimal | Debit of (string, string, decimal)
           let aPayment = Debit ("Name On Card, "1234-4321")
           match aPayment with
@@ -1062,7 +1065,7 @@
           ```
               
       - `as`
-        - ```fsharp
+          ```fsharp
           let x =
             match ("john doe", "1234-4321", 30.32) with
             | (x, y, z) as debitPayment ->
@@ -1071,7 +1074,7 @@
           ```
               
       - On Subtypes (Code smell)
-        - ```fsharp
+          ```fsharp
           let x = new Object()
           let y =
             match x with
@@ -1083,8 +1086,8 @@
           ```
                 
       - On multiple values
-        -Is not allowed. But the values can be inserted into a tuple
-        - ```fsharp
+        - Is not allowed. But the values can be inserted into a tuple
+          ```fsharp
           let matchOnCustomerAndPaymentType customer paymentType =
             match (customer, paymentType) with
             | ({LastName="Adams"}, pT) ->
@@ -1095,14 +1098,14 @@
           ```
               
       - Guards
-        -`when` is used for Guards           
+        - `when` is used for Guards           
         - Guards can be used for all sorts of things that pure patterns can’t be used for, such as:
             * Comparing the bound values
             * Testing object properties
             * Different kinds of matching, such as regular expressions
             * Conditionals derived from functions
-        *Comparing the bound values
-        - ```fsharp
+        * Comparing the bound values
+          ```fsharp
           let elementsAreEqual aTuple = 
             match aTuple with 
             | (x,y) -> 
@@ -1116,19 +1119,19 @@
             | _ ->
                 printfn "They are different"
           ```
-        *Testing object properties
-        - ```fsharp
+        * Testing object properties
+          ```fsharp
           type Payment = {Cost:decimal; Payment:decimal}
           ```
-        - ```fsharp
+          ```fsharp
           let isOverpayment payment =
             match payment:Payment with
             | x when x.Payment > x.Cost -> trye
             | _ -> false
           ```
             
-        *Different kinds of matching, such as regular expressions
-        - ```fsharp
+        * Different kinds of matching, such as regular expressions
+          ```fsharp
           let classifyString aString = 
             match aString with 
             | x when Regex.Match(x,@".+@.+").Success-> 
@@ -1137,8 +1140,8 @@
                 printfn "%s is something else" aString
           ```
                 
-        *Conditionals derived from functions
-        - ```fsharp
+        * Conditionals derived from functions
+          ```fsharp
           let costInString x =
             match x with
             | x when x = 0 -> printfn "its free"
@@ -1147,7 +1150,7 @@
             | _ -> "I guess its ok"
           ```
       - `function`
-        - ```fsharp
+          ```fsharp
           let f aValue =
             match aValue with
             | pattern1 -> expression1
@@ -1157,8 +1160,7 @@
             | pattern1 -> expression1
             | pattern2 -> expression2
           ```
-            
-        - ```fsharp
+          ```fsharp
           // using match..with
           [1..10] |> List.map (fun i ->
                   match i with 
@@ -1196,25 +1198,25 @@
         ```
 
     - let
-      -There are two uses of `let`:
-        *Top level: a named expression at the top lovel of a module; analog to methods.
-        *Local: used in the context of some expression.
+      - There are two uses of `let`:
+        * Top level: a named expression at the top lovel of a module; analog to methods.
+        * Local: used in the context of some expression.
         
-      -It can use patterns directly
-        - ```fsharp
+      - It can use patterns directly
+          ```fsharp
           let anInt = 1
           ```
-        - ```fsharp
+          ```fsharp
           let aPerson = {FirstName:"Ann"; LastName:"Robinson"}
           ```
-      -In functions with parameters
-        - ```fsharp
+      - In functions with parameters
+          ```fsharp
           let multiply (a,b) = a * b
           ```
         
     - Active Patterns
-      -Dynamically parse or detect a pattern.
-      - ```fsharp
+      - Dynamically parse or detect a pattern.
+        ```fsharp
         let (|Int|_|) str =
           match System.Int32.TryParse(str) with
           | (true,int) -> Some(int)
@@ -1228,8 +1230,8 @@
         ```
     
   - Asynchronous programming or asynchronous workflows
-    -They are objects that encapsulate a background task providing several operations
-    - ```fsharp
+    - They are objects that encapsulate a background task providing several operations
+      ```fsharp
       let timerAsync =
         let timer = new Timer(1000m)
         let timerEvent = Async.AwaitEvent (timer.Elapsed) |> Async.Ignore
@@ -1239,24 +1241,24 @@
         Async.RunSynchronously timerEvent
       ```
         
-      *`Async.AwaitEvent` -> Creates an `async` object directly from the event.
-      *`Async.Ignore` -> Ignores the result
-      *`Async.RunSynchronously` -> blocks on the async object until it has completed
-    -Note: async workflows can be used with `IAsyncResult`, begin/end, and other .NET methods
+      * `Async.AwaitEvent` -> Creates an `async` object directly from the event.
+      * `Async.Ignore` -> Ignores the result
+      * `Async.RunSynchronously` -> blocks on the async object until it has completed
+    - Note: async workflows can be used with `IAsyncResult`, begin/end, and other .NET methods
     
-    -Manually creating async workflows.
+    - Manually creating async workflows.
       - Use `async` keyword and curly braces and inside a set of expressions to be executed in the background.
       
-      - ```fsharp
+        ```fsharp
         let sleepWorkflow = async {
           do! Async.Sleep 1000
         }
         Async.RunSynchronously sleepWorkflow
         ```
         
-    -Nested workflows
-      -Within the braces, nested worflows can be blocked on by using `let!`, `do!`, `use`
-      - ```fsharp
+    - Nested workflows
+      - Within the braces, nested worflows can be blocked on by using `let!`, `do!`, `use`
+        ```fsharp
         let calculatePrices
           (calculateTax: (CompanyId * InvoiceId) -> Async<TaxCalculation>)
           (getProductPricing: CompanyId * CatalogItemId list -> Async<ProductsPricing>)
@@ -1278,16 +1280,16 @@
           Async.RunSynchronously calculatePrices 
         ```
           
-      -Cancelling workflows
-        -Use the `CancellationToken` class. Any nested async call will check the cancellation token automatically.
-        - ```fsharp
+      - Cancelling workflows
+        - Use the `CancellationToken` class. Any nested async call will check the cancellation token automatically.
+          ```fsharp
           let cancellationSource = new CancellationtokenSource()
           Async.Start (calculationPrices, cancellationSource.Token)
           cancellationSource.Cancel()
           ```
           
-      -Serial workflows
-        - ```fsharp
+      - Serial workflows
+          ```fsharp
           let calculatePricesInSeries = async {
             let! calculatePricesFirst =
               calculatePrices calculateTax getProductPricing (1234, "invoice1", [1, 2, 3])
@@ -1297,8 +1299,8 @@
           Async.RunSynchronously calculatePricesInSeries
           ```
           
-      -Parallel workflows
-        - ```fsharp
+      - Parallel workflows
+          ```fsharp
           let calculatePrices1 =
               calculatePrices calculateTax getProductPricing (1234, "invoice1", [1, 2, 3])
           let calculatePrices2 =
