@@ -499,7 +499,7 @@
         type MiddleName = Option<string>
         ```
         ```fsharp
-        type PhoneNumber = string option
+        type PhoneNumber = string option //recommended for build-in option and list types
         ```
         - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
         - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
@@ -536,9 +536,12 @@
             match addTaxes with
             | Some x -> x * quantity
             | None -> 0
+            
             let amountToPay quantity =
               addTaxes
               |> Option.fold (fun x -> x * quantity) 0
+              //Or with partial application of (*)
+              //|> Option.fold ((*) quantity) 0
             ```
 
     - Classes
