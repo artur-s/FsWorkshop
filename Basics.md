@@ -310,14 +310,14 @@
         let t2 = snd t  //snd extracts the second element.
         ```
       
-      -Tuples are equal if they have the same length and values in each slot.
-      - `(1,2) = (1,2)`             ?
-      - `(1,2,3) = (1,3,2)`         ?
-      - `(1, (2,3), 4) = (1,2,3,4)` ?
-      - `(1,(2,3),4) = (1,2,(3,4))` ?
-      - `(1,2) = (1,2,3)`           ?
+      - Tuples are equal if they have the same length and values in each slot.
+        - `(1,2) = (1,2)`             ?
+        - `(1,2,3) = (1,3,2)`         ?
+        - `(1, (2,3), 4) = (1,2,3,4)` ?
+        - `(1,(2,3),4) = (1,2,(3,4))` ?
+        - `(1,2) = (1,2,3)`           ?
       
-      -Printing
+      - Printing
         ```fsharp
         printf "%s" t1.ToString()
         ```
@@ -327,22 +327,22 @@
 
     - Records
       - Records are tuples where each element is labeled.
-      ```fsharp
-        type Person = {firstName: string; lastName: string}
-        let aPerson = {firstName = "Juan"; lastName: "Perez"}     //What are the differences?
-      
-        let {firstName = fName; lastName = lName} = aPerson     //What is this?
-        let {firstName = _; lastName = lName} = aPerson
-      
-        let firstName = aPerson.firstName
-        let lastName = aPerson.lastName
-      ```
+        ```fsharp
+          type Person = {firstName: string; lastName: string}
+          let aPerson = {firstName = "Juan"; lastName: "Perez"}     //What are the differences?
+        
+          let {firstName = fName; lastName = lName} = aPerson     //What is this?
+          let {firstName = _; lastName = lName} = aPerson
+        
+          let firstName = aPerson.firstName
+          let lastName = aPerson.lastName
+        ```
       
       - Order doesn't matter
-      ```fsharp
-        let bPerson = {lastName = "Perez"; firstName = "Juan"}
-        aPerson = bPerson
-      ```
+        ```fsharp
+          let bPerson = {lastName = "Perez"; firstName = "Juan"}
+          aPerson = bPerson
+        ```
       
       - Records might have same structure.
         ```fsharp
@@ -504,7 +504,7 @@
         - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
         - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
 
-      -Printing
+      - Printing
         ```fsharp
         let middleName = MiddleName "Dolores"
         printfn "%A" middleName  //Nice representation
