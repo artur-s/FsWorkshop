@@ -312,14 +312,14 @@
         let t2 = snd t  //snd extracts the second element.
         ```
       
-      -Tuples are compared by structure. In other words, they are equal if they have the same length and values in each slot.
-      - `(1,2) = (1,2)`             ?
-      - `(1,2,3) = (1,3,2)`         ?
-      - `(1, (2,3), 4) = (1,2,3,4)` ?
-      - `(1,(2,3),4) = (1,2,(3,4))` ?
-      - `(1,2) = (1,2,3)`           ?
+      - Tuples are equal if they have the same length and values in each slot.
+        - `(1,2) = (1,2)`             ?
+        - `(1,2,3) = (1,3,2)`         ?
+        - `(1, (2,3), 4) = (1,2,3,4)` ?
+        - `(1,(2,3),4) = (1,2,(3,4))` ?
+        - `(1,2) = (1,2,3)`           ?
       
-      -Printing
+      - Printing
         ```fsharp
         printf "%s" t1.ToString()
         printfn "%s" t1.ToString()
@@ -330,22 +330,22 @@
 
     - Records
       - Records are tuples where each element is labeled.
-      ```fsharp
-        type Person = {firstName: string; lastName: string}
-        let aPerson = {firstName = "Juan"; lastName: "Perez"}     //What are the differences?
-      
-        let {firstName = fName; lastName = lName} = aPerson     //What is this?
-        let {firstName = _; lastName = lName} = aPerson
-      
-        let firstName = aPerson.firstName
-        let lastName = aPerson.lastName
-      ```
+        ```fsharp
+          type Person = {firstName: string; lastName: string}
+          let aPerson = {firstName = "Juan"; lastName: "Perez"}     //What are the differences?
+        
+          let {firstName = fName; lastName = lName} = aPerson     //What is this?
+          let {firstName = _; lastName = lName} = aPerson
+        
+          let firstName = aPerson.firstName
+          let lastName = aPerson.lastName
+        ```
       
       - Order doesn't matter
-      ```fsharp
-        let bPerson = {lastName = "Perez"; firstName = "Juan"}
-        aPerson = bPerson
-      ```
+        ```fsharp
+          let bPerson = {lastName = "Perez"; firstName = "Juan"}
+          aPerson = bPerson
+        ```
       
       - Records might have same structure.
         ```fsharp
@@ -502,12 +502,12 @@
         type MiddleName = Option<string>
         ```
         ```fsharp
-        type PhoneNumber = string option
+        type PhoneNumber = string option //recommended for build-in option and list types
         ```
         - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
         - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
 
-      -Printing
+      - Printing
         ```fsharp
         let middleName = MiddleName "Dolores"
         printfn "%A" middleName  //Nice representation
@@ -539,9 +539,12 @@
             match addTaxes with
             | Some x -> x * quantity
             | None -> 0
+            
             let amountToPay quantity =
               addTaxes
               |> Option.fold (fun x -> x * quantity) 0
+              //Or with partial application of (*)
+              //|> Option.fold ((*) quantity) 0
             ```
 
     - Classes
@@ -826,6 +829,13 @@
           ```
     
     
+  - Expressions vs statements
+    
+    A fundamental building block of F# programs is an _expression_.
+    
+    - _statement_ - a command that performs some action and usually changes the state  or transfers the control flow, e.g. `return` statement_p.328
+    - _expression_ - a computation that can be evaluated and gives a result.
+
   - Type Inference
     - Based on an algorithm called "Hindley-Milner".
       - Rules
