@@ -11,8 +11,18 @@ Operators
 * "not" is used instead of "!"
 * In parameters, commas are replaced by whitespace
 * In non-parameter usage (eg lists), commas are replaced by semicolons in most places. 
-
 *)
+
+
+(* 0. Reading a type signature of a function.
+ When using pure functions, the type signature of a function tells a lot about what the function does.
+ Try to think of what each of the below functions does and rename it
+ f1: ('a -> bool) -> 'a list -> a' list
+ f2: ('a -> bool) -> 'a list -> int
+ f3: ('a -> 'b) -> 'a list -> 'b list
+ f4: ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list
+*)
+
 
 // 1. Create a "Hello world" function that introduces yourself. Where yourself is a parameter
 //    And run it
