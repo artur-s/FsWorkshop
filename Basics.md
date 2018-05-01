@@ -4,7 +4,7 @@
     - Values
       - Signature. 
         ```fsharp
-        val aName: type = constant.
+        val aName: type = expression.
         ```
       
       - The `let` keyword defines an (immutable) value. No types needed

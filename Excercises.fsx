@@ -5,7 +5,7 @@
 (*
 Quick cheat-sheet
 
-Symbols
+Operators
 * "=" is used instead of "=="
 * "<>" is used instead of "!="
 * "not" is used instead of "!"
@@ -18,8 +18,7 @@ Symbols
 //    And run it
 
 
-
-// 2. Re-implement this function using partial application
+// 2. Re-implement this function partialy applying `printfn`
 
 
 
