@@ -868,9 +868,13 @@
       printf "Provisioning a toster ..." ; 70150
     ```
 
-    The first example looks like it contains a code block, but in internally it is two expressions that are sequentially composed using `;`.
+    The first example looks like it contains a code block, but internally it is two expressions that are sequentially composed using `;`.
 
     Every expressions that is not used, passed to or returned from a function, generates a compiler warnings.
+
+    To explicitly ignore use the `ignore: a' -> unit` function.
+
+
 
   - Type Inference
     - Based on an algorithm called "Hindley-Milner".
