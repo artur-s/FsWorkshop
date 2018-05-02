@@ -37,10 +37,9 @@
     - There is very little difference between simple values and function values. 
     - One of the key aspects of thinking functionally is: 
        functions are values that can be passed around as inputs to other functions.
-  
+
 2. Currying
-    - A function with multiple parameters is rewritten as a series of new tions, each with only one parameter.
-    - Done automatically by the compiler
+    - A function taking multiple arguments separated by spaces is generated as a function that takes a single argument and returns a function that takes next argument, etc.
       
       ```fsharp
       let add x y =
