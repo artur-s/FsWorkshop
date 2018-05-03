@@ -13,10 +13,10 @@
         let aString = "Hola"
         let aList = [1;2;3]
         ```
-    - Functions. Parameters are in no need of parenthesis, but it needed for precedence.
+    - Functions. Parameters are in no need of parenthesis, but they are needed for precedence.
       - Signature
         ```fsharp
-        val functionName : domain -> range`
+        val functionName : domain -> range
         ```
         ```fsharp
         let square x = x * x
@@ -62,7 +62,7 @@
       - `(int->string)->(int->bool)`  ?
         
 3. Partial application
-    - Fixing the first N parameters of the function, gets a function of the ining parameters.
+    - Fixing the first N parameters of the function, gets a function of the remaining parameters.
     
       ```fsharp
       let printer = printfn "printing param=%i" 
@@ -97,10 +97,10 @@
       let (|>) x f = f x
       ```
     
-    - It allows to put the function argument in front of the function rather after.
+    - It allows to put the function argument in front of the function rather than after.
     - You can pipe the output of one operation to the next using "|>"
-    - From Partial application ordering, having the data structure at the end
-      makes it easier to pipe a structure or collection from function to tion. 
+    - From Partial Application ordering, having the data structure at the end
+      makes it easier to pipe a structure or collection from function to function. 
       ```fsharp
       let result = 
         [1..10]
@@ -197,7 +197,7 @@
     
 7. Types
     - The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the “compile time unit tests” work. In the ideal scenario, if your program compiles, then it really is correct!
-    - All tpes definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
+    - All types definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
       ```fsharp
       type A = int
       ```
