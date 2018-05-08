@@ -262,7 +262,7 @@
        - Decoupling between the meaning and the definition of a type.
        - Its not really a new type, just an alias.
        - Two different aliases of the same type are compatible and the  compiler does not show an error. 
-         For example, the following code type-checks even though a  different alias is passed to the printInvoiceId function
+         For example, the following code type-checks even though a different alias is passed to the printInvoiceId function.
          ```fsharp
          type InvoiceId = Guid
          type CustomerId = Guid
@@ -294,7 +294,7 @@
          ```
        - Tuples are single objects.
        - Order matters -> `int*bool` not the same as `bool*int`
-       - The comma is the most important of tuples.
+       - The comma is the most important characteristic of tuples.
          ```fsharp
          let t = 3, 6    //Constructing
          ```
@@ -379,7 +379,7 @@
          | Boolean of bool 
          ```
          ```fsharp
-         type IntOrBool = Integers of int | Booleans of bool   //Note:  vertical bar is only option before the first component.
+         type IntOrBool2 = Integers of int | Booleans of bool   //Note:  vertical bar is only option before the first component.
          ```
          ```fsharp
          type AnyType =
@@ -501,7 +501,7 @@
          type MiddleName = Option<string>
          ```
          ```fsharp
-         type PhoneNumber = string option //recommended for build-in  option and list types
+         type PhoneNumber = string option //recommended for built-in option and list types
          ```
          - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
          - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
@@ -931,7 +931,7 @@
           let stringLength (x:string) = x.Length
           ```
           
-        - Not enough information and can't be generic
+        - Overloaded methods
           ```fsharp
           let concat x = System.String.Concat(x)
           ```
@@ -966,7 +966,7 @@
         ```
        - Note: It looks like a series of lamba expressions where each one has exactly one parameter.
         So, it can be seen as a choice between a set of lambda expressions.
-        Each choice is deffined by the first pattern that matches the expression.
+        Each choice is defined by the first pattern that matches the expression.
         _Order is important_ (unlike `switch`)
                     
          ```fsharp
@@ -983,7 +983,7 @@
            | "a" -> 1
            | "b" -> 2
          ```
-       - `match`..`with` is an expression; thus, all branches mush evaluate to the same type
+       - `match`..`with` is an expression; thus, all branches must evaluate to the same type
          ```fsharp
          let x y =
            match y with
@@ -996,12 +996,12 @@
        - Formatting suggestions
          - Alignment of `| expression` should be directly under `match`
          - `match`..`with` should be on a new line
-         - The expression after `->` should be on a new line when  expression is long.
+         - The expression after `->` should be on a new line when expression is long.
          
        - Exhaustive matching
          - There must always be a branch that matches.
-           -Compiler will warn about it. (Sometimes unnecessarily, in  which a `_` can be used. Be sure to document why its being  used)
-           -If ignored and unmatched, a `MatchFailureException` will  be thrown.
+           - Compiler will warn about it. (Sometimes unnecessarily, in  which a `_` can be used. Be sure to document why its being  used)
+           - If ignored and unmatched, a `MatchFailureException` will  be thrown.
          - Avoid using wildcard, specially in union types. This will  help catching errors when a new case is added to the union.
              ```fsharp
              type PaymentMethods = Cash | Debit | Credit
@@ -1069,7 +1069,7 @@
        6. On Union
           ```fsharp
           type PaymentType = Cash of decimal | Debit of (string, string, decimal)
-          let aPayment = Debit ("Name On Card, "1234-4321")
+          let aPayment = Debit ("Name On Card", "1234-4321")
           match aPayment with
           | Cash amount -> sprintfn "Payment of %d was cash" amount
           | Debit (name, number, amount) ->
@@ -1191,7 +1191,7 @@
            ```fsharp
            type Contact = 
                | EmailAddress of string
-               | PhoneNumeber of string
+               | PhoneNumber of string
    
            type Member = {
                FirstName:string
@@ -1204,7 +1204,7 @@
    
            let adultsPhone member' =
                match member' with
-               | {Age = Adult; Contact = PhoneNumeber phone } -> Some    phone
+               | {Age = Adult; Contact = PhoneNumber phone } -> Some    phone
                | _ -> None
            ```
  
