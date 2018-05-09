@@ -4,7 +4,7 @@
     - Values
       - Signature. 
         ```fsharp
-        val aName: type = constant.
+        val aName: type = expression.
         ```
       
       - The `let` keyword defines an (immutable) value. No types needed
@@ -13,10 +13,10 @@
         let aString = "Hola"
         let aList = [1;2;3]
         ```
-    - Functions. Parameters are in no need of parenthesis, but it needed for precedence.
+    - Functions. Parameters are in no need of parenthesis, but they are needed for precedence.
       - Signature
         ```fsharp
-        val functionName : domain -> range`
+        val functionName : domain -> range
         ```
         ```fsharp
         let square x = x * x
@@ -62,7 +62,7 @@
       - `(int->string)->(int->bool)`  ?
         
 3. Partial application
-    - Fixing the first N parameters of the function, gets a function of the ining parameters.
+    - Fixing the first N parameters of the function, gets a function of the remaining parameters.
     
       ```fsharp
       let printer = printfn "printing param=%i" 
@@ -97,10 +97,10 @@
       let (|>) x f = f x
       ```
     
-    - It allows to put the function argument in front of the function rather after.
+    - It allows to put the function argument in front of the function rather than after.
     - You can pipe the output of one operation to the next using "|>"
-    - From Partial application ordering, having the data structure at the end
-      makes it easier to pipe a structure or collection from function to tion. 
+    - From Partial Application ordering, having the data structure at the end
+      makes it easier to pipe a structure or collection from function to function. 
       ```fsharp
       let result = 
         [1..10]
@@ -197,7 +197,7 @@
     
 7. Types
     - The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the “compile time unit tests” work. In the ideal scenario, if your program compiles, then it really is correct!
-    - All tpes definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
+    - All types definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
       ```fsharp
       type A = int
       ```
@@ -262,7 +262,7 @@
        - Decoupling between the meaning and the definition of a type.
        - Its not really a new type, just an alias.
        - Two different aliases of the same type are compatible and the  compiler does not show an error. 
-         For example, the following code type-checks even though a  different alias is passed to the printInvoiceId function
+         For example, the following code type-checks even though a different alias is passed to the printInvoiceId function.
          ```fsharp
          type InvoiceId = Guid
          type CustomerId = Guid
@@ -294,7 +294,7 @@
          ```
        - Tuples are single objects.
        - Order matters -> `int*bool` not the same as `bool*int`
-       - The comma is the most important of tuples.
+       - The comma is the most important characteristic of tuples.
          ```fsharp
          let t = 3, 6    //Constructing
          ```
@@ -379,7 +379,7 @@
          | Boolean of bool 
          ```
          ```fsharp
-         type IntOrBool = Integers of int | Booleans of bool   //Note:  vertical bar is only option before the first component.
+         type IntOrBool2 = Integers of int | Booleans of bool   //Note:  vertical bar is only option before the first component.
          ```
          ```fsharp
          type AnyType =
@@ -501,7 +501,7 @@
          type MiddleName = Option<string>
          ```
          ```fsharp
-         type PhoneNumber = string option //recommended for build-in  option and list types
+         type PhoneNumber = string option //recommended for built-in option and list types
          ```
          - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
          - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
@@ -830,10 +830,50 @@
     
 8. Expressions vs statements
     
-    A fundamental building block of F# programs is an _expression_.
+    - _statement_ - a command that performs some action and usually changes the state  or transfers the control flow, e.g. `return` statement _p.328
+    - _expression_ - a computation that can be evaluated and yields a result.
+
+    A fundamental building block of F# programs is an _expression_. Entire F# program is a composite expression that returns a value.
+    Every function returns a value, including impure functions performing only a side-effect, e.g:
+
+    ```fsharp
+    let res =
+      if isNewYear then
+          printfn "Launching fireworks..."
+    ```
+    evaluates to:
+    ```
+    Launching fireworks...
+    val res : unit = ()
+    ```
+    The `()` is (the only possible) value of type `Unit`. It is used for representing lack of information and in practice it indicates that the expression (or function) performs a side-effect.
+
+    The `if` statement is also an expression. Here it returns a value of type `Unit`. As no `else` clause is provided, the expression in `then` has to be of type `Unit`
+
+    Sequencing expressions
+
+    Expressions that evaluate to unit `()` can be chanined together placing them in a new line (preserving the same indentation) or using `;` operator.
     
-    - _statement_ - a command that performs some action and usually changes the state  or transfers the control flow, e.g. `return` statement_p.328
-    - _expression_ - a computation that can be evaluated and gives a result.
+    The `;` ignores the expression on the left, evaluates the expression on the right and returns its value.
+
+    The below examples are equivalent. The `res` evaluates to `70150`
+    ```fsharp
+    let res =
+      printf "Provisioning a toster ..."
+      70150
+    ```
+    ```fsharp
+    let res = 
+      printf "Provisioning a toster ..." ; 70150
+    ```
+
+    The first example looks like it contains a code block, but internally it is two expressions that are sequentially composed using `;`.
+
+    Every expressions that is not used, passed to or returned from a function, generates a compiler warnings.
+
+    To explicitly ignore use the `ignore: a' -> unit` function.
+
+
 
 9. Type Inference
     - Based on an algorithm called "Hindley-Milner".
@@ -931,7 +971,7 @@
           let stringLength (x:string) = x.Length
           ```
           
-        - Not enough information and can't be generic
+        - Overloaded methods
           ```fsharp
           let concat x = System.String.Concat(x)
           ```
@@ -966,7 +1006,7 @@
         ```
        - Note: It looks like a series of lamba expressions where each one has exactly one parameter.
         So, it can be seen as a choice between a set of lambda expressions.
-        Each choice is deffined by the first pattern that matches the expression.
+        Each choice is defined by the first pattern that matches the expression.
         _Order is important_ (unlike `switch`)
                     
          ```fsharp
@@ -983,7 +1023,7 @@
            | "a" -> 1
            | "b" -> 2
          ```
-       - `match`..`with` is an expression; thus, all branches mush evaluate to the same type
+       - `match`..`with` is an expression; thus, all branches must evaluate to the same type
          ```fsharp
          let x y =
            match y with
@@ -996,12 +1036,12 @@
        - Formatting suggestions
          - Alignment of `| expression` should be directly under `match`
          - `match`..`with` should be on a new line
-         - The expression after `->` should be on a new line when  expression is long.
+         - The expression after `->` should be on a new line when expression is long.
          
        - Exhaustive matching
          - There must always be a branch that matches.
-           -Compiler will warn about it. (Sometimes unnecessarily, in  which a `_` can be used. Be sure to document why its being  used)
-           -If ignored and unmatched, a `MatchFailureException` will  be thrown.
+           - Compiler will warn about it. (Sometimes unnecessarily, in  which a `_` can be used. Be sure to document why its being  used)
+           - If ignored and unmatched, a `MatchFailureException` will  be thrown.
          - Avoid using wildcard, specially in union types. This will  help catching errors when a new case is added to the union.
              ```fsharp
              type PaymentMethods = Cash | Debit | Credit
@@ -1069,7 +1109,7 @@
        6. On Union
           ```fsharp
           type PaymentType = Cash of decimal | Debit of (string, string, decimal)
-          let aPayment = Debit ("Name On Card, "1234-4321")
+          let aPayment = Debit ("Name On Card", "1234-4321")
           match aPayment with
           | Cash amount -> sprintfn "Payment of %d was cash" amount
           | Debit (name, number, amount) ->
@@ -1191,7 +1231,7 @@
            ```fsharp
            type Contact = 
                | EmailAddress of string
-               | PhoneNumeber of string
+               | PhoneNumber of string
    
            type Member = {
                FirstName:string
@@ -1204,7 +1244,7 @@
    
            let adultsPhone member' =
                match member' with
-               | {Age = Adult; Contact = PhoneNumeber phone } -> Some    phone
+               | {Age = Adult; Contact = PhoneNumber phone } -> Some    phone
                | _ -> None
            ```
  
