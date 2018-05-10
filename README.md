@@ -16,7 +16,7 @@
         - record [1](https://youtu.be/-0BB3lU_qr4?t=623), discriminated union
         - object expressions
         - (class, interface)
-  	  - expression based:
+  	  - Expressions vs statements:
         - see: F# Deep Dive book (T.Petricek chapter) 
         - [Expressions vs Statements in DevJoy post](http://www.devjoy.com/2014/12/decorating-immutable-christmas-trees/)
       - type inference
