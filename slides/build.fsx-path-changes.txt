@@ -1,0 +1,3 @@
+
+let outDir = __SOURCE_DIRECTORY__ </> "../output"
+let slidesDir = __SOURCE_DIRECTORY__ </> "../source"
