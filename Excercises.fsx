@@ -26,34 +26,156 @@ Operators
 
 // 1. Create a "Hello world" function that introduces yourself. Where yourself is a parameter
 //    And run it
-
+let helloWorld name = printfn "Hello world! My name is %s" name
+helloWorld "juanito"
 
 // 2. Re-implement this function partialy applying `printfn`
-
+let helloWorld2 = printfn "Hello world! My name is %s"
+helloWorld2 "anita"
 
 
 // 3. Use piping to pass the name into the function.
-
+"anita" |> helloWorld2
 
 
 // 4. Create a composition function made from a greeting and a response.
-
+let greeting name = printfn "Hello world! my name is %s" name
+                    name
+let response name = printfn "Hello %s, welcome to the world" name
+let result = greeting >> response
+result "jonas"
 
 
 // 5. Create a type for Customer where each property is also a custom type.
 //    Try to use Record, aliases, tuples.
 //    Create a function for construction and one for deconstruction.
 
+open System
+type CustomerId = CustomerId of Guid
+type Age = int
+type String50 = private String50 of string
+    module String50 =
+        let create (s:string) = 
+            if String.IsNullOrEmpty(s) then 
+                None               
+            else if (s.Length <= 50) then
+                Some (String50 s)
+            else None
+        let value (String50 s) = s
+
+type Name = {
+  FirstName: String50
+  LastName: String50
+}    
+type Customer = {
+  Id : CustomerId
+  Name: Name
+  Age: Age
+}
+
+let aCustomer =
+  let name = {
+    FirstName = String50 "Anna"
+    LastName = String50 "Collin"
+  }
+  {
+    Id = CustomerId (Guid.NewGuid())
+    Name = name
+    Age = 32
+  }
+aCustomer
+let deconstruct =
+  let {FirstName = fName; LastName = lName } = aCustomer.Name
+  let {Id = id; Age = age} = aCustomer
+  printfn "The person name %s %s" (string fName) (string lName) 
+  printfn "Customer %A, is %d years old" id age
+deconstruct
 
 // 6. Add a discrimanted union to your model. i.e. customer type, contact mode, etc.
 //    Update its construction and deconstruction functions.
 
+type EmailAddress = private EmailAddress of string
+module EmailAddress =
+    let create (s:string) = 
+        if String.IsNullOrEmpty(s) then 
+            None               
+        else if s.Contains("@") then
+            Some (EmailAddress s)
+        else None
+    let value (EmailAddress s) = s
 
+type AddressInfo = {
+    Address1: String50
+    Address2: String50
+    PostalCode: String50
+    Country: String50 
+    }  
+
+type ContactInfo = 
+    | EmailOnly of EmailAddress
+    | AddrOnly of AddressInfo
+    | EmailAndAddr of EmailAddress * AddressInfo
+
+type EnhanchedCustomer = {
+  Id : CustomerId
+  Name: Name
+  Age: Age
+  Contact: ContactInfo
+}
+
+let aCustomer2 =
+  let name = {
+    FirstName = String50 "Anna"
+    LastName = String50 "Collin"
+  }
+  {
+    Id = CustomerId (Guid.NewGuid())
+    Name = name
+    Age = 32
+    Contact = EmailOnly (EmailAddress "aja@aja.com")
+  }
+aCustomer2
+let deconstruct2 =
+  let {FirstName = fName; LastName = lName } = aCustomer2.Name
+  let {Id = id; Age = age; Contact = contact} = aCustomer2
+  printfn "The person name %s %s" (string fName)(string lName) 
+  printfn "Customer %A, is %d years old" id age
+  printfn "Contact info is %A" contact
+deconstruct2
 
 // 7. Add or modify a property with an option type to it. i.e. Middle name, phone number, etc.
 //    Update its construction and deconstruction functions.
-
-
+type FullName = {
+  FirstName: String50
+  MiddleName: String50 option
+  LastName: String50
+}   
+type EnhanchedCustomer2 = {
+  Id : CustomerId
+  Name: FullName
+  Age: Age
+  Contact: ContactInfo
+}
+let aCustomer3 =
+  let name = {
+    FirstName = String50 "Anna"
+    MiddleName = Some (String50 "Marie")
+    LastName = String50 "Collin"
+  }
+  {
+    Id = CustomerId (Guid.NewGuid())
+    Name = name
+    Age = 32
+    Contact = EmailOnly (EmailAddress "aja@aja.com")
+  }
+aCustomer3
+let deconstruct3 =
+  let {FirstName = fName; MiddleName = mName; LastName = lName } = aCustomer3.Name
+  let {EnhanchedCustomer2.Id = id; Age = age; Contact = contact} = aCustomer3
+  printfn "The person name %s %s %s" (string fName) (string mName) (string lName) 
+  printfn "Customer %A, is %d years old" id age
+  printfn "Contact info is %A" contact
+deconstruct3
 
 // 8. Create an interface for calculating age for the customer. Try creating it both as object expression or as independent interface.
 //    Implement it.
