@@ -153,7 +153,8 @@
       ```fsharp
       let h (x:int) = g ( f(x) )
       ```
-    - Additionlly, the two functions can be combined without defining them.  
+    - Composition can be abstracted to work on any two matching functions.
+
       ```fsharp
       let compose f g x = g ( f(x) )
       ```
@@ -216,7 +217,7 @@
     - They can only be declared in namespaces or modules.
     - Can't be declared inside functions.
     
-    - Constructing types
+    - Constructing values
       ```fsharp
       let a = 3
       ```
@@ -232,7 +233,7 @@
       ```fsharp
       let e = AChoice "this choice"
       ```
-    - Deconstructing types
+    - Deconstructing values
       ```fsharp
       let (b1, b2) = (6, 39)
       ```
@@ -247,7 +248,7 @@
     
     1. Abbreviations or aliases
        ```fsharp
-       type [name] = [existingType]
+       type [alias] = [existingType]
        ```
        ```fsharp
        type PaymentMethodId = int
@@ -292,7 +293,7 @@
          ```fsharp
          type PersonalPayment = Person * PaymentMethod
          ```
-       - Tuples are single objects.
+       - Tuples are single values.
        - Order matters -> `int*bool` not the same as `bool*int`
        - The comma is the most important characteristic of tuples.
          ```fsharp
