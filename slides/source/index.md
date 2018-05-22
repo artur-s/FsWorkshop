@@ -66,7 +66,7 @@ _The best language available for .NET_
 
 
 <!--Paradigm-->
-### Why it is worth learning FP?
+### Why is it worth learning FP?
 
  * Disruptive change in software development. Functional features are invading imperative languages like C#, C++, Java
  * Knowing functional paradigm helps writing more robust code in imperative languages
@@ -186,7 +186,7 @@ _The best language available for .NET_
         (int -> string) -> (int->bool)
 
 
----
+***
 
 
 ### 3. Partial application
@@ -224,7 +224,7 @@ Fixing the first N parameters of the function, gets a function of the remaining 
     let eachAdd1 = List.map (fun i -> i+1) 
     eachAdd1 [0;1;2;3]
             
----
+***
 
 
 ### 4. Pipelining
@@ -278,64 +278,62 @@ It reduces the need for parentheses and can make the code cleaner.
     1+2 |> add <| 3+4
 
     
----
-
-
-<!--
+***
 
 
 ### 5. Function composition
 
 
-* Suppose the following functions
+Suppose the following functions
+
 
     [lang=fsharp]
-      let f (x:int) = float x * 3.0
-      let g (x:float) = x > 5.0
+    let f (x:int) = float x * 3.0
+    let g (x:float) = x > 5.0
+
 
 ---
 
 
-* Then the following function takes the output of "f" and inputs it into "g".  
+Then the following function takes the output of `f` and inputs it into `g`
+
+
     [lang=fsharp]
-        let h (x:int) =
-          let y = f(x)
-          g(y)
-
----
-
-
-* Or...  
-    [lang=fsharp]
-      let h (x:int) = g ( f(x) )
-
----
-
-* Additionlly, the two functions can be combined without defining them.  
-    [lang=fsharp]
-      let compose f g x = g ( f(x) )
-
----
-
-* And its signature:  
-    [lang=fsharp]
-      let compose : ('a -> 'b) -> ('b -> 'c) -> 'a -> 'c
-
----
-
-* The definition of composition operator. 
-
-        [lang=fsharp]
-        let (>>) f g x = g ( f(x) )
-
-        // Or using partial application
-        let (>>) f g = fun x -> g (f x)
-
----
-
-* Note: This is only possible because every function has one input and one output.
+    let h (x:int) =
+      let y = f(x)
+      g(y)
     
-Example:  
+    // Or...  
+    let h (x:int) = g ( f(x) )
+
+
+---
+
+Composition can be abstracted to work on any two matching functions
+
+
+    [lang=fsharp]
+    let compose f g x = g ( f(x) )
+    
+    // ('a -> 'b) -> ('b -> 'c) -> 'a -> 'c
+
+
+---
+
+The definition of composition operator
+
+
+    [lang=fsharp]
+    let (>>) f g x = g ( f(x) )
+    
+    // or using partial application
+    let (>>) f g = fun x -> g (f x)
+
+
+---
+
+This is only possible because every function has one input and one output.
+
 
     [lang=fsharp]
     let add3 x = x + 3
@@ -345,24 +343,28 @@ Example:
 
 ---
 
-* Reverse composition
+Reverse composition
 
-        [lang=fsharp]
-        let reverseCompose : ('b -> 'c) -> ('a -> 'b) -> 'a -> 'c
-        let (<<) f g x = g ( f(x) )
+
+    [lang=fsharp]
+    // reverseCompose : ('b -> 'c) -> ('a -> 'b) -> 'a -> 'c
+    let (<<) f g x = g ( f(x) )
+
         
 ---
 
-
-* Used mainly to make code more like English and more concise
-      
-        [lang=fsharp]
-        let aList = []
-        aList |> List.isEmpty |> not
-        aList |> (not << List.isEmpty)
+Used mainly to make code more like English and more concise
+    
+  
+    [lang=fsharp]
+    let aList = []
+    aList |> List.isEmpty |> not
+    aList |> (not << List.isEmpty)
 
     
----
+***
+
+
 
 ### 6. Pipelining vs Function composition
 
@@ -375,140 +377,147 @@ In other words, the expression on the left side of the `|>` operator is passed t
 
 It returns a function instead of immediately invoking the sequence.
 
+***
+
+
+### 7. Types
+
+---
+
+The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. 
+And the better they statically encode the business rules, the better the “compile time unit tests” work. 
+In the ideal scenario, if your program compiles, then it really is correct!
+
+
+    [lang=fsharp]
+    type A = int
+    type B = int * int
+    type C = {FirstName:string; LastName:string}
+    type D = Square of int | Rectangle of int * int
+    type E<'a> = AChoice of 'a | OtherChoice of 'a * 'a 
+
+
+They can only be declared in namespaces or modules.
+Can't be declared inside functions.
+
+
+---
+
+Constructing values
+
+
+    [lang=fsharp]
+    let a = 3
+    let b = (6, 39)
+    let c = {FirstName="Grzegorz"; LastName="Brzęczyszczykiewicz"
+    let d = Rectangle (5, 6)
+    let e = AChoice "this choice"
+
+---
+
+Deconstructing values
+
+
+    [lang=fsharp]
+    let (b1, b2) = (6, 39)
+    let { FirstName = c1 } = c
+   
+    match d with
+    | Square d1 -> printf "Square with sides %i" d1
+    | Rectangle (d1, d2) -> printf "Rectangle with sides %i %i" d1 d2
+
+---
+
+    
+#### 7.1. Abbreviations or aliases
+
+---
+
+    [lang=fsharp]
+    // type [alias] = [existingType]
+    type PaymentMethodId = int
+    type CustomerId = Guid
+    type CustomerPaymentMethod = PaymentMethodId * CustomerId
+    
+* They provide documentation.
+* Decoupling between the meaning and the definition of a type.
+* Its not really a new type, just an alias.
+ 
+---
+   
+Two different aliases of the same type are compatible. Compiler does not show an error. 
+For example, the following code type-checks even though a different alias is passed to the printInvoiceId function.
+
+    [lang=fsharp]
+    type InvoiceId = Guid
+    type CustomerId = Guid
+    
+    let printInvoiceId (i:InvoiceId) =
+        printfn "Invoice id is:%A" i
+    
+    let customerId:CustomerId = Guid.NewGuid()
+    printInvoiceId customerId
+
+
+---
+ 
+#### 7.2. Tuples
+
+
+Imagine the Cartesian product of two collections. 
+Each combination is expressed as (a1, b1), (a1, b2), ..., (a2, b1)
+
+Hence the type signature
+
+
+    [lang=fsharp]
+    let tuple1 = (3, 9)             // int * int
+    let tuple2 = ("Hola!", true)    // string * bool
+    let tuple4 = ("Bob", 42, true)
+    let tuple5 = 1, 2, 3            // parenthesis are  not required.
+    type PersonalPayment = Person * PaymentMethod
     
 ---
 
-### 7. Types
-    - The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the “compile time unit tests” work. In the ideal scenario, if your program compiles, then it really is correct!
-    - All types definitions start with a `type` keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition.
-      ```fsharp
-      type A = int
-      ```
-      ```fsharp
-      type B = int * int
-      ```
-      ```fsharp
-      type C = {FirstName:string; LastName:string}
-      ```
-      ```fsharp
-      type D = Square of int | Rectangle of int * int
-      ```
-      ```fsharp
-      type E<'a> = AChoice of 'a | OtherChoice of 'a * 'a 
-      ```
-    - They can only be declared in namespaces or modules.
-    - Can't be declared inside functions.
-    
-    - Constructing types
-      ```fsharp
-      let a = 3
-      ```
-      ```fsharp
-      let b = (6, 39)
-      ```
-      ```fsharp
-      let c = {FirstName="Grzegorz"; LastName="Brzęczyszczykiewicz"
-      ```
-      ```fsharp
-      let d = Rectangle (5, 6)
-      ```
-      ```fsharp
-      let e = AChoice "this choice"
-      ```
-    - Deconstructing types
-      ```fsharp
-      let (b1, b2) = (6, 39)
-      ```
-      ```fsharp
-      let { FirstName = c1 } = c
-      ```
-      ```fsharp
-      match d with
-      | Square d1 -> printf "Square with sides %i" d1
-      | Rectangle (d1, d2) -> printf "Rectangle with sides %i %i" d1 d2
-      ```
-    
-    1. Abbreviations or aliases
-       ```fsharp
-       type [name] = [existingType]
-       ```
-       ```fsharp
-       type PaymentMethodId = int
-       ```
-       ```fsharp
-       type CustomerId = Guid
-       ```
-       ```fsharp
-       type CustomerPaymentMethod = PaymentMethodId * CustomerId
-       ```
-       - They provide documentation.
-       - Decoupling between the meaning and the definition of a type.
-       - Its not really a new type, just an alias.
-       - Two different aliases of the same type are compatible and the  compiler does not show an error. 
-         For example, the following code type-checks even though a different alias is passed to the printInvoiceId function.
-         ```fsharp
-         type InvoiceId = Guid
-         type CustomerId = Guid
- 
-         let printInvoiceId (i:InvoiceId) =
-             printfn "Invoice id is:%A" i
- 
-         let customerId:CustomerId = Guid.NewGuid()
-         printInvoiceId customerId
-         ```
- 
-    2. Tuples
-       - Imagine the Cartesian product of two collections. Each  combination is expressed as (a1, b1), (a1, b2), ..., (a2, b1)
-       - Hence the type signature that they do.
-         ```fsharp
-         let tuple1 = (3, 9)             //Signature: int * int
-         ```
-         ```fsharp
-         let tuple2 = ("Hola!", true)    //Signature: string * bool
-         ```
-         ```fsharp
-         let tuple4 = ("Bob", 42, true)
-         ```
-         ```fsharp
-         let tuple5 = 1, 2, 3            //Note that parenthesis are  not required.
-         ```
-         ```fsharp
-         type PersonalPayment = Person * PaymentMethod
-         ```
-       - Tuples are single objects.
-       - Order matters -> `int*bool` not the same as `bool*int`
-       - The comma is the most important characteristic of tuples.
-         ```fsharp
-         let t = 3, 6    //Constructing
-         ```
-         ```fsharp
-         let t1, t2 = t  //Deconstructing
-         ```
-         ```fsharp
-         let t1, _ = t   //_ is a wildcard
-         ```
-         ```fsharp
-         let t1 = fst t  //fst extracts the first element
-         ```
-         ```fsharp
-         let t2 = snd t  //snd extracts the second element.
-         ```
+Tuples are single values.
+Order matters:`int * bool` not the same as `bool * int`
+
+
+    [lang=fsharp]
+    let t = 3, 6    // constructing
+    let t1, t2 = t  //Deconstructing
+    let t1, _ = t   //_ is a wildcard
+    let t1 = fst t  //fst extracts the first element
+    let t2 = snd t  //snd extracts the second element.
        
-       - Tuples are equal if they have the same length and values in  each slot.
-         - `(1,2) = (1,2)`             ?
-         - `(1,2,3) = (1,3,2)`         ?
-         - `(1, (2,3), 4) = (1,2,3,4)` ?
-         - `(1,(2,3),4) = (1,2,(3,4))` ?
-         - `(1,2) = (1,2,3)`           ?
+---
+
+Tuples are equal if they have the same length and values in  each slot.
+
+
+        (1,2) = (1,2) // ?
+        (1,2,3) = (1,3,2) // ?
+        (1, (2,3), 4) = (1,2,3,4) // ?
+        (1,(2,3),4) = (1,2,(3,4)) // ?
+        (1,2) = (1,2,3) // ?
        
-       - Printing
-         ```fsharp
-         printf "%s" t1.ToString()
-         printfn "%s" t1.ToString()
-         ```
-         ```fsharp
-         printf "%O" t1
-         ```
+---
+
+Printing
+
+
+    [lang=fsharp]
+    // pretty-printing tuples, records and union types
+    printf "%A" t1
+    
+    printfn "%s" t1.ToString()
+    // or
+    printf "%O" t1
+
+
+---
+
+<!--
  
     3. Records
        - Records are tuples where each element is labeled.
@@ -1564,6 +1573,7 @@ It returns a function instead of immediately invoking the sequence.
 
 <!--End: Basics ============================================= -->
 
+***
 
 ### Exercises
 
