@@ -830,10 +830,50 @@
     
 8. Expressions vs statements
     
-    A fundamental building block of F# programs is an _expression_.
+    - _statement_ - a command that performs some action and usually changes the state  or transfers the control flow, e.g. `return` statement _p.328
+    - _expression_ - a computation that can be evaluated and yields a result.
+
+    A fundamental building block of F# programs is an _expression_. Entire F# program is a composite expression that returns a value.
+    Every function returns a value, including impure functions performing only a side-effect, e.g:
+
+    ```fsharp
+    let res =
+      if isNewYear then
+          printfn "Launching fireworks..."
+    ```
+    evaluates to:
+    ```
+    Launching fireworks...
+    val res : unit = ()
+    ```
+    The `()` is (the only possible) value of type `Unit`. It is used for representing lack of information and in practice it indicates that the expression (or function) performs a side-effect.
+
+    The `if` statement is also an expression. Here it returns a value of type `Unit`. As no `else` clause is provided, the expression in `then` has to be of type `Unit`
+
+    Sequencing expressions
+
+    Expressions that evaluate to unit `()` can be chanined together placing them in a new line (preserving the same indentation) or using `;` operator.
     
-    - _statement_ - a command that performs some action and usually changes the state  or transfers the control flow, e.g. `return` statement_p.328
-    - _expression_ - a computation that can be evaluated and gives a result.
+    The `;` ignores the expression on the left, evaluates the expression on the right and returns its value.
+
+    The below examples are equivalent. The `res` evaluates to `70150`
+    ```fsharp
+    let res =
+      printf "Provisioning a toster ..."
+      70150
+    ```
+    ```fsharp
+    let res = 
+      printf "Provisioning a toster ..." ; 70150
+    ```
+
+    The first example looks like it contains a code block, but internally it is two expressions that are sequentially composed using `;`.
+
+    Every expressions that is not used, passed to or returned from a function, generates a compiler warnings.
+
+    To explicitly ignore use the `ignore: a' -> unit` function.
+
+
 
 9. Type Inference
     - Based on an algorithm called "Hindley-Milner".
