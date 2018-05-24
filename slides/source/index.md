@@ -116,13 +116,13 @@ _The best language available for .NET_
 
 ### What is it?
 
-* Separation of data and logic vs. object with mutable state
+* Separation of data and behavior vs. object with mutable state
 
 ***
 
 ### What is it?
 
-* Separation of data and logic vs. object with mutable state
+* Separation of data and behavior vs. object with mutable state
 * Pure functions and immutable _data types_ vs classes
 
 ***
@@ -130,20 +130,29 @@ _The best language available for .NET_
 
 ### What is it?
 
-* Separation of data and logic vs. object with mutable state
+* Separation of data and behavior vs. object with mutable state
 * Pure functions and immutable _data types_ vs classes
 * Composition of functions
 
 ***
 
-
 ### What is it?
 
-* Separation of data and logic vs. object with mutable state
+* Separation of data and behavior vs. object with mutable state
 * Pure functions and immutable _data types_ vs classes
 * Composition of functions
 * Composition of data structures
 
+
+***
+
+### What is it?
+
+* Separation of data and behavior vs. object with mutable state
+* Pure functions and immutable _data types_ vs classes
+* Composition of functions
+* Composition of data structures
+* Declarative style
 
 --- 
 
