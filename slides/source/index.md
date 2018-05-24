@@ -69,7 +69,7 @@ _The best language available for .NET_
 ### Why is it worth learning FP?
 
 
-***
+---
 
 ### Why is it worth learning FP?
 
@@ -77,7 +77,7 @@ _The best language available for .NET_
 
 ' * C# has LINQ (declarative style of programming, that implements list monad). C++ has lambdas. Even Java, the bastion of OOP finally let the lambdas in!    
 
-***
+---
 
 ### Why is it worth learning FP?
 
@@ -86,7 +86,7 @@ _The best language available for .NET_
 
 ' * Using data transformation, avoiding side-effects, making types immutable, etc.
 
-***
+---
 
 ### Why is it worth learning FP?
 
@@ -96,7 +96,7 @@ _The best language available for .NET_
 
 ' * OO paradigm encourages dangerous and buggy design. The premise of OO, hiding data (not strictly encapsulation) combined with sharing and mutation leads to race conditions. For example, hiding locks in objects can cause deadlocks
 
-***
+---
 
 ### Why is it worth learning FP?
 
@@ -107,25 +107,28 @@ _The best language available for .NET_
 
 ' * Concise syntax and simple design are more important now
 
+***
+
+
+### What is it?
+
 ---
 
 
 ### What is it?
 
-***
-
-### What is it?
-
 * Separation of data and logic vs. object with mutable state
 
-***
+---
+
 
 ### What is it?
 
 * Separation of data and logic vs. object with mutable state
 * Pure functions and immutable _data types_ vs classes
 
-***
+---
+
 
 
 ### What is it?
@@ -134,7 +137,8 @@ _The best language available for .NET_
 * Pure functions and immutable _data types_ vs classes
 * Composition of functions
 
-***
+---
+
 
 
 ### What is it?
@@ -144,18 +148,17 @@ _The best language available for .NET_
 * Composition of functions
 * Composition of data structures
 
-
---- 
+***
 
 ### Why it matters?
 
-*** 
+---
 
 ### Why it matters?
 
 * Pure functions (and also pure data structures) are easier to compose
 
-*** 
+---
 
 
 ### Why it matters?
@@ -163,7 +166,7 @@ _The best language available for .NET_
 * Pure functions (and also pure data structures) are easier to compose
 * Pure functions (data transformations) and immutable data is simple to reason about
 
-*** 
+---
 
 ### Why it matters?
 
@@ -171,7 +174,7 @@ _The best language available for .NET_
 * Pure functions (data transformations) and immutable data is simple to reason about
 * modeling side-effects with data structures (DSL's), transformed by pure functions and interpreted at the edge of the application.
 
-*** 
+---
 
 ### Why it matters?
 
@@ -181,7 +184,6 @@ _The best language available for .NET_
 * It is [simpler and safer](https://fsharpforfunandprofit.com/posts/is-your-language-unreasonable/)
 
 *** 
-
 
 
 <!--Basics ============================================= -->
@@ -549,6 +551,7 @@ For example, the following code type-checks even though a different alias is pas
  
 #### 7.2. Tuples
 
+---
 
 Imagine the Cartesian product of two collections. 
 Each combination is expressed as (a1, b1), (a1, b2), ..., (a2, b1)
@@ -603,49 +606,67 @@ Printing
 
 ---
 
-<!--
+
+#### 7.3. Records
+
+---
  
-    3. Records
-       - Records are tuples where each element is labeled.
-         ```fsharp
-           type Person = {firstName: string; lastName: string}
-           let aPerson = {firstName = "Juan"; lastName: "Perez"}      //What are the differences?
-         
-           let {firstName = fName; lastName = lName} = aPerson      //What is this?
-           let {firstName = _; lastName = lName} = aPerson
-         
-           let firstName = aPerson.firstName
-           let lastName = aPerson.lastName
-         ```
+Records are tuples where each element is labeled.
+
+    [lang=fsharp]
+    type Person = {firstName: string; lastName: string}
+    let aPerson = {firstName = "Juan"; lastName: "Perez"} // What are the differences?
+    
+    let {firstName = fName; lastName = lName} = aPerson  // What is this?
+    let {firstName = _; lastName = lName} = aPerson
+    
+    let firstName = aPerson.firstName
+    let lastName = aPerson.lastName
+
+---
+    
        
-       - Order doesn't matter
-         ```fsharp
-           let bPerson = {lastName = "Perez"; firstName = "Juan"}
-           aPerson = bPerson
-         ```
+Order doesn't matter
+
+    [lang=fsharp]
+    let bPerson = {lastName = "Perez"; firstName = "Juan"}
+    aPerson = bPerson
+
+---
+
        
-       - Records might have same structure.
-         ```fsharp
-         let Customer = {firstName: string; lastName: string}
-         let aDude = {firstName = "John"; lastName = "Johnson"}      //What type is aDude?
-         ```
-       - To break ambiguity, add the type name to at least one of the  labels.
-         ```fsharp
-         let aCustomer = {Customer.firstName="John",  lastName="Johnson"}
-         ```
-       
-       - Note that in F#, unlike some other functional languages, two  types with exactly the same structural definition are not the  same type. Two types are only equal if they have the same name.
-       
-       - `with`
-         ```fsharp
-         let aCustomerChild = {aCustomer with firstName="Little  Johnny"}
-         ```
-       
-       - Printing
-         ```fsharp
-         printfn "%A" aCustomer  //Nice representation
-         printfn "%O" aCustomer  //Not nice
-         ```
+Records might have same structure.
+
+    [lang=fsharp]
+    let Customer = {firstName: string; lastName: string}
+    let aDude = {firstName = "John"; lastName = "Johnson"}  // What type is aDude?
+
+To break ambiguity, add the type name to at least one of the  labels.
+
+    [lang=fsharp]
+    let aCustomer = {Customer.firstName="John",  lastName="Johnson"}
+
+
+In F#, unlike some other functional languages, two types with exactly the same structural definition are not the same type. Two types are only equal if they have the same (fully qualified) name.
+
+---
+
+
+"Modifying" records using `with`
+
+    [lang=fsharp]
+    let aCustomerChild = {aCustomer with firstName="Little  Johnny"}
+
+---
+
+Printing
+
+    [lang=fsharp]
+    printfn "%A" aCustomer  //Nice representation
+    printfn "%O" aCustomer  //Not nice
+
+
+<!--
       
     4. Discriminated Unions
        - While tuples and records are types of multiplication,  Discriminated Unions are types of addition.

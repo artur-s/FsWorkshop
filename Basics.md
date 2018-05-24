@@ -357,7 +357,7 @@
          let aCustomer = {Customer.firstName="John",  lastName="Johnson"}
          ```
        
-       - Note that in F#, unlike some other functional languages, two  types with exactly the same structural definition are not the  same type. Two types are only equal if they have the same name.
+       - Note that in F#, unlike some other functional languages, two types with exactly the same structural definition are not the same type. Two types are only equal if they have the same (fully qualified) name.
        
        - `with`
          ```fsharp
