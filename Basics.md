@@ -331,37 +331,37 @@
     3. Records
        - Records are tuples where each element is labeled.
          ```fsharp
-           type Person = {firstName: string; lastName: string}
-           let aPerson = {firstName = "Juan"; lastName: "Perez"}      //What are the differences?
+           type Person = {FirstName: string; LastName: string}
+           let aPerson = {FirstName = "Juan"; LastName: "Perez"}      //What are the differences?
          
-           let {firstName = fName; lastName = lName} = aPerson      //What is this?
-           let {firstName = _; lastName = lName} = aPerson
+           let {FirstName = fName; LastName = lName} = aPerson      //What is this?
+           let {FirstName = _; LastName = lName} = aPerson
          
-           let firstName = aPerson.firstName
-           let lastName = aPerson.lastName
+           let firstName = aPerson.FirstName
+           let lastName = aPerson.LastName
          ```
        
        - Order doesn't matter
          ```fsharp
-           let bPerson = {lastName = "Perez"; firstName = "Juan"}
+           let bPerson = {LastName = "Perez"; FirstName = "Juan"}
            aPerson = bPerson
          ```
        
        - Records might have same structure.
          ```fsharp
-         let Customer = {firstName: string; lastName: string}
-         let aDude = {firstName = "John"; lastName = "Johnson"}      //What type is aDude?
+         type Customer = {FirstName: string; LastName: string}
+         let aDude = {FirstName = "John"; LastName = "Johnson"}      //What type is aDude?
          ```
        - To break ambiguity, add the type name to at least one of the  labels.
          ```fsharp
-         let aCustomer = {Customer.firstName="John",  lastName="Johnson"}
+         let aCustomer = {Customer.FirstName="John";  LastName="Johnson"}
          ```
        
        - Note that in F#, unlike some other functional languages, two types with exactly the same structural definition are not the same type. Two types are only equal if they have the same (fully qualified) name.
        
        - `with`
          ```fsharp
-         let aCustomerChild = {aCustomer with firstName="Little  Johnny"}
+         let aCustomerChild = {aCustomer with FirstName="Little  Johnny"}
          ```
        
        - Printing
@@ -398,7 +398,7 @@
          let aBool = Boolean false
          ```
          ```fsharp
-         let aCustomer = Customer {firstName = "Bob"; lastName =  "Bobson"}
+         let aCustomer = Customer {FirstName = "Bob"; LastName =  "Bobson"}
          ```
          ```fsharp
          let anEmptyCase = AnEmptyCase

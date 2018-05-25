@@ -622,14 +622,14 @@ Printing
 Records are tuples where each element is labeled.
 
     [lang=fsharp]
-    type Person = {firstName: string; lastName: string}
-    let aPerson = {firstName = "Juan"; lastName: "Perez"} // What are the differences?
+    type Person = {FirstName: string; LastName: string}
+    let aPerson = {FirstName = "Juan"; LastName: "Perez"}
     
-    let {firstName = fName; lastName = lName} = aPerson  // What is this?
-    let {firstName = _; lastName = lName} = aPerson
+    let {FirstName = fName; LastName = lName} = aPerson
+    let {FirstName = _; LastName = lName} = aPerson
     
-    let firstName = aPerson.firstName
-    let lastName = aPerson.lastName
+    let firstName = aPerson.FirstName
+    let lastName = aPerson.LastName
 
 ---
     
@@ -637,22 +637,22 @@ Records are tuples where each element is labeled.
 Order doesn't matter
 
     [lang=fsharp]
-    let bPerson = {lastName = "Perez"; firstName = "Juan"}
+    let bPerson = {LastName = "Perez"; FirstName = "Juan"}
     aPerson = bPerson
 
 ---
 
        
-Records might have same structure.
+Different records might have same structure.
 
     [lang=fsharp]
-    let Customer = {firstName: string; lastName: string}
-    let aDude = {firstName = "John"; lastName = "Johnson"}  // What type is aDude?
+    type Customer = {FirstName: string; LastName: string}
+    let aDude = {FirstName = "John"; LastName = "Johnson"}  // What type is aDude?
 
 To break ambiguity, add the type name to at least one of the  labels.
 
     [lang=fsharp]
-    let aCustomer = {Customer.firstName="John",  lastName="Johnson"}
+    let aCustomer = {Customer.FirstName="John"; LastName="Johnson"}
 
 
 In F#, unlike some other functional languages, two types with exactly the same structural definition are not the same type. Two types are only equal if they have the same (fully qualified) name.
@@ -663,169 +663,204 @@ In F#, unlike some other functional languages, two types with exactly the same s
 "Modifying" records using `with`
 
     [lang=fsharp]
-    let aCustomerChild = {aCustomer with firstName="Little  Johnny"}
+    let aCustomerChild = {aCustomer with FirstName = "Little Johnny"}
+
+---
+
+Printing
+
+
+    [lang=fsharp]
+    
+    // pretty printing
+    printfn "%A" aCustomer
+    
+    // >
+    // {FirstName = "John";
+    //  LastName = "Johnson";}
+
+    // regular `.ToString()`
+    printfn "%O" aCustomer
+
+
+---
+
+#### 7.4. Discriminated Unions
+
+Used for modeling an alternative (logical `or`)
+
+    [lang=fsharp]
+    /// IntOrBool is the sum of all Integer or Boolean
+    type IntOrBool =    
+    | Integer of int
+    | Boolean of bool 
+
+    [lang=fsharp]
+    type IntOrBool2 = Integers of int | Booleans of bool
+
+    [lang=fsharp]
+    type AnyType =
+    | Customer of Customer
+    | ATuple of int * string
+    | AListOfIntOrBool of IntOrBool list
+    | AnEmptyCase
+
+' Discriminated Unions allow for modeling alternative.
+' Each component is called *union case*, and each one contains  a *case identifier* or *tag*. Each *tag* must start with upper  case.
+
+---
+
+Construction
+    
+    [lang=fsharp]
+    let anInt = Integer 33
+    let aBool = Boolean false
+    let aCustomer = Customer {FirstName = "Bob"; LastName =  "Bobson"}
+    let anEmptyCase = AnEmptyCase
+    let aFewSquares = 
+      [1..5]
+      |> List.map Square
+
+---
+
+Naming conflicts
+
+    [lang=fsharp]
+    type OtherIntOrBool = Integer of Int | Boolean of bool
+
+    // What type is aValue?
+    let aValue = Integer 3      
+
+    let otherValue = OtherIntOrBool.Integer 52
+
+        
+---
+
+Deconstruction with *match*
+
+    [lang=fsharp]
+    let intOrBool x =
+        match x wtih
+        | Integer i -> printfn "This is an int! %i" i
+        | Boolean b -> printfn "This is a bool! %A" b
+          
+    let anInt = Integer 46
+    intOrBool anInt
+
+' When you have an alternative you have to make a choice. Pattern matching is used for that.
+
+
+---
+ 
+Single cases - Useful to enforce type safety.
+
+    [lang=fsharp]
+    type CustomerId = int   // What is this called?
+
+    let printCustomerId (customerId:CustomerId) =
+      printfn ("This is the customerId %i" customerId)
+    let paymentMethodId = 123
+    printCustomerId paymentMethodId     //What happens?
+
+    
+    type CustomerId = CustomerId of int
+
+    let printCustomerId (CustomerId customerId) =   // What type is the customerId?
+      printfn ("This is the customerId %i" customerId)
+    let paymentMethodId = 123
+    printCustomerId paymentMethodId     //What happens?
+    
+    let customerId = CustomerId 321
+    printCustomerId customerId
+    
+    let (CustomerId customerIdInt) = customerId
+    type SingleEmptyCase = | EmptyCase
+
+---
+
+Equality
+
+    [lang=fsharp]
+    type PaymentMethod = Cash of decimal | Debit of DebitCard
+    let aCashPayment = Cash 438.72m
+    let otherCashPayment = Cash 438.72m
+    let areEqual = (aCashPayment = otherCashPayment)
+
+' Two unions are equal if they have the same type, the same case and the same values for that case.
 
 ---
 
 Printing
 
     [lang=fsharp]
-    printfn "%A" aCustomer  //Nice representation
-    printfn "%O" aCustomer  //Not nice
+    printfn "%A" aCashPayment
+
+    // >
+    // Cash 438.72M
+
+---
 
 
-<!--
-      
-    4. Discriminated Unions
-       - While tuples and records are types of multiplication,  Discriminated Unions are types of addition.
-       - Each component is called *union case*, and each one contains  a *case identifier* or *tag*. Each *tag* must start with upper  case.
-       - Disciminated Unions are type safe, and data can only be  accessed one way.
-         ```fsharp
-         type IntOrBool =    //IntOrBool is the sum of all Integer or  Boolean
-         | Integer of int
-         | Boolean of bool 
-         ```
-         ```fsharp
-         type IntOrBool2 = Integers of int | Booleans of bool   //Note:  vertical bar is only option before the first component.
-         ```
-         ```fsharp
-         type AnyType =
-         | Customer of Customer       //Labels can have the same name  of the component type. Common, used as documentation.
-         | ATuple of int * string
-         | AListOfIntOrBool of IntOrBool list    //Note: Custom types  muust be pre-defined.
-         | AnEmptyCase     //No need for a type.
-         ```
-         
-       - Construction
-         ```fsharp
-         let anInt = Integer 33
-         ```
-         ```fsharp
-         let aBool = Boolean false
-         ```
-         ```fsharp
-         let aCustomer = Customer {firstName = "Bob"; lastName =  "Bobson"}
-         ```
-         ```fsharp
-         let anEmptyCase = AnEmptyCase
-         ```
-         ```fsharp
-         let aFewSquares = 
-           [1..5]
-           |> List.map Square
-         ```
-      
-       - Naming conflicts
-         ```fsharp
-         type OtherIntOrBool = Integer of Int | Boolean of bool
-         let aValue = Integer 3      //? which type is it?
- 
-         let otherValue = OtherIntOrBool.Integer 52
-         ```
-        
-       - Deconstruction with *match*
-        ```fsharp
-        let intOrBool x =
-          match x wtih
-          | Integer i -> printfn "This is an int! %i" i
-          | Boolean b -> printfn "This is a bool! %A" b
-          
-        let anInt = Integer 46
-        intOrBool anInt
-        ```
-      
-       - Single cases
-         - Useful practice to enforce type safety.
-         
-           ```fsharp
-           type CustomerId = int   // What is this called?
-           let printCustomerId (customerId:CustomerId) =
-             printfn ("This is the customerId %i" customerId)
-           let paymentMethodId = 123
-           printCustomerId paymentMethodId     //What happens?
-         
-         
-           type CustomerId = CustomerId of int
-           let printCustomerId (CustomerId customerId) =   // What are  we doing with customerId?
-             printfn ("This is the customerId %i" customerId)
-           let paymentMethodId = 123
-           printCustomerId paymentMethodId     //What happens?
-         
-           let customerId = CustomerId 321
-           printCustomerId customerId
-         
-           let (CustomerId customerIdInt) = customerId   //Note:  parenthesis must surround the deconstruction.
-           type SingleEmptyCase = | EmptyCase      //Note: vertical  bar must be present.
-           ```
-         
-       - Equality
-         - Two unions are equal if they have the same type, the same  case and the values for that case are equal.
-           ```fsharp
-           type PaymentMethod = Cash of decimal | Debit of DebitCard
-           let aCashPayment = Cash 438.72
-           let otherCashPayment = Cash 438.72
-           let areEqual = (aCashPayment = otherCashPayment)
-           ```
+#### 7.5. Object expressions
+
+Allow to implement an interface on-the-fly, without having to create a class.
        
-       - Printing
-         ```fsharp
-         printfn "%A" aCashPayment  //Nice representation
-         printfn "%O" otherCashPayment  //Not nice
-         ```
- 
-    5. Object expressions
-       - It allows to implement an interface on-the-fly, without  having to create a class.
-       
-         ```fsharp
-         let createResource name =
-           { new System.IDisposable
-             with member this.Dispose() = printfn "%A disposed" name }
-           let useThenDisposeResource =
-             use resource = createResource "A resource"
-             printfn "Starting to use resource"
-             use otherResource = createResource "Another resource"
-             printfn "Starting to use another resource"
-             printfn "done."
-         ```
-          
-    6. Option.
-         ```fsharp
-         type Option<'a> =
-           | Some of 'a
-           | None
-         ```
-         ```fsharp
-         let someInt = Some 2    //Constructor
-         let noInt = None
+    [lang=fsharp]
+    let createResource name =
+      { new System.IDisposable
+        with member this.Dispose() = printfn "%A disposed" name }
+      let useThenDisposeResource =
+        use resource = createResource "A resource"
+        printfn "Starting to use resource"
+        use otherResource = createResource "Another resource"
+        printfn "Starting to use another resource"
+        printfn "done."
+
+---
+    
+#### 7.6. Option
+
+    [lang=fsharp]
+    type Option<'a> =
+      | Some of 'a
+      | None
+
+    let someInt = Some 2    //Constructor
+    let noInt = None
+
+    match someInt with
+    | Some i -> printfn "Here is the int %d" x    //Deconstructor
+    | None -> printfn "No value"
          
-         match someInt with
-         | Some i -> printfn "Here is the int %d" x    //Deconstructor
-         | None -> printfn "No value"
-         ```
-         
-       - Defining option type.
-         ```fsharp
-         type MiddleName = Option<string>
-         ```
-         ```fsharp
-         type PhoneNumber = string option //recommended for built-in option and list types
-         ```
-         - `["a","b","c"] |> List.tryFind (fun x -> x = "b")`  // ??
-         - `["a","b","c"] |> List.tryFind (fun x -> x = "d")`  // ??
- 
-       - Printing
-         ```fsharp
-         let middleName = MiddleName "Dolores"
-         printfn "%A" middleName  //Nice representation
-         printfn "%O" middleName  //Also nice
-         ```
-       
-       - WARNING:
-         - Using `IsSome`, `IsNone` and `Value` should be avoided. Use  pattern matching instead. However, `IsSome` and `IsNone` are  sometimes useful when you don't care about the value.
-           Why?
+---
+
+
+
+    [lang=fsharp]
+    type MiddleName = Option<string>
+    type PhoneNumber = string option // recommended
+
+---
+
+    [lang=fsharp]
+    ["a","b","c"] |> List.tryFind (fun x -> x = "b")  // ??
+    ["a","b","c"] |> List.tryFind (fun x -> x = "d")  // ??
+
+---
+
+   
+Using `IsSome`, `IsNone` and `Value` should be avoided. 
+Use pattern matching instead. 
+However, `IsSome` and `IsNone` are  sometimes useful when you don't care about the value.
+
+---
+
+
           
-       - Option module
-         - `map`
+`Option` module
+
+Using `map`
+
              ```fsharp
              let aCost = Some 123.32
              let aTax = 0.15
@@ -838,8 +873,13 @@ Printing
                aCost
                |> Option.map (fun c -> c + c * aTax)
              ```
-           
-         - `fold`
+---
+ 
+Using `bind`
+
+
+          
+<!--Using `fold`
              ```fsharp
              let amountToPay quantity =
              match addTaxes with
@@ -851,7 +891,9 @@ Printing
                |> Option.fold (fun x -> x * quantity) 0
                //Or with partial application of (*)
                //|> Option.fold ((*) quantity) 0
-             ```
+             ```-->
+
+<!--
  
     7. Classes
        - They always have parantheses after the class name.
