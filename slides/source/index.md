@@ -20,7 +20,7 @@ Artur Siwic
 
 Help iQ developers switch to F#
 
-_The best language available for .NET_
+_The most productive language available for .NET_
 
 ***
 
@@ -535,8 +535,8 @@ Deconstructing values
     type CustomerId = Guid
     type CustomerPaymentMethod = PaymentMethodId * CustomerId
     
-* They provide documentation.
-* Decoupling between the meaning and the definition of a type.
+* Provide documentation.
+* Decouple the meaning and the definition of a type.
 * Its not really a new type, just an alias.
  
 ---
@@ -752,21 +752,29 @@ Deconstruction with *match*
 
 ---
  
-Single cases - Useful to enforce type safety.
+##### Single case union
+
 
     [lang=fsharp]
     type CustomerId = int   // What is this called?
 
     let printCustomerId (customerId:CustomerId) =
       printfn ("This is the customerId %i" customerId)
+
     let paymentMethodId = 123
     printCustomerId paymentMethodId     //What happens?
 
-    
+' Useful to enforce type safety. Let's see how.
+
+
+---
+
+    [lang=fsharp]
     type CustomerId = CustomerId of int
 
     let printCustomerId (CustomerId customerId) =   // What type is the customerId?
       printfn ("This is the customerId %i" customerId)
+
     let paymentMethodId = 123
     printCustomerId paymentMethodId     //What happens?
     
@@ -776,9 +784,10 @@ Single cases - Useful to enforce type safety.
     let (CustomerId customerIdInt) = customerId
     type SingleEmptyCase = | EmptyCase
 
+
 ---
 
-Equality
+Structural equality
 
     [lang=fsharp]
     type PaymentMethod = Cash of decimal | Debit of DebitCard
@@ -786,17 +795,11 @@ Equality
     let otherCashPayment = Cash 438.72m
     let areEqual = (aCashPayment = otherCashPayment)
 
-' Two unions are equal if they have the same type, the same case and the same values for that case.
-
----
-
-Printing
-
-    [lang=fsharp]
     printfn "%A" aCashPayment
-
     // >
     // Cash 438.72M
+
+' Two unions are equal if they have the same type, the same case and the same values for that case.
 
 ---
 
@@ -809,12 +812,16 @@ Allow to implement an interface on-the-fly, without having to create a class.
     let createResource name =
       { new System.IDisposable
         with member this.Dispose() = printfn "%A disposed" name }
-      let useThenDisposeResource =
+
+    let useThenDisposeResource =
         use resource = createResource "A resource"
         printfn "Starting to use resource"
+
         use otherResource = createResource "Another resource"
         printfn "Starting to use another resource"
         printfn "done."
+
+    ' Dispose() is called when the `use` binding gets out-of-scope
 
 ---
     
@@ -825,20 +832,22 @@ Allow to implement an interface on-the-fly, without having to create a class.
       | Some of 'a
       | None
 
-    let someInt = Some 2    //Constructor
+    // Construction
+    let someInt = Some 2
     let noInt = None
 
+    // Deconstruction
     match someInt with
-    | Some i -> printfn "Here is the int %d" x    //Deconstructor
+    | Some i -> printfn "Here is the int %d" x
     | None -> printfn "No value"
          
 ---
 
-
-
     [lang=fsharp]
     type MiddleName = Option<string>
-    type PhoneNumber = string option // recommended
+    type PhoneNumber = string option // recommended, also for list and array
+
+    ' The 2nd form is recommended for option, list, array
 
 ---
 
@@ -849,49 +858,87 @@ Allow to implement an interface on-the-fly, without having to create a class.
 ---
 
    
-Using `IsSome`, `IsNone` and `Value` should be avoided. 
+Don't use `opt.Value`.
 Use pattern matching instead. 
-However, `IsSome` and `IsNone` are  sometimes useful when you don't care about the value.
+
+Avoid using `opt.IsSome`, `opt.IsNone`. 
+
+' However, `IsSome` and `IsNone` are  sometimes useful when you don't care about the value.
 
 ---
-
-
           
-`Option` module
+##### `Option` module
 
-Using `map`
+Using `Option.map`
+    
 
-             ```fsharp
-             let aCost = Some 123.32
-             let aTax = 0.15
-             let addTaxes =
-               match aCost with
-               | Some c -> Some(c + c * aTax)
-               | None -> None
+    [lang=fsharp]
+    // Option.map : ('a -> 'b) -> 'a option -> 'b option
+
+    let aCost = Some 123.32
+    let aTax = 0.15
+    let addTaxes =
+        match aCost with
+        | Some c -> Some(c + c * aTax)
+        | None -> None
                
-             let addTaxes =
-               aCost
-               |> Option.map (fun c -> c + c * aTax)
-             ```
+    let addTaxes =
+        aCost
+        |> Option.map (fun c -> c + c * aTax)
+
 ---
+
+##### `Option` module
  
-Using `bind`
+Using `Option.bind`
+
+    [lang=fsharp]
+    // Option.bind : ('a -> 'b option) -> 'a option -> 'b option
+    
+    type PaymentMethod = PaymentMethod of int
+
+    let parsePositiveFirst3Int str = 
+        match str with
+        | "1" -> Some 1
+        | "2" -> Some 2
+        | "3" -> Some 3
+        | _ -> None
+
+    let toPaymentMethod pm = 
+        if pm >= 1 then Some (PaymentMethod pm)
+        else None
+
+    // What's the signature?
+    let parseToPaymentMethod str =
+        parsePositiveFirst3Int str
+        |> Option.bind toPaymentMethod
 
 
-          
-<!--Using `fold`
-             ```fsharp
-             let amountToPay quantity =
-             match addTaxes with
-             | Some x -> x * quantity
-             | None -> 0
+' If the input parameter is `None`, then don't call the next function.
+' If it is `Some`, then call the next function, passing the contents of the `Some`.
+
+
+---
+     
+##### `Option` module
+     
+Using `Option.fold`
+
+    [lang=fsharp]
+    let amountToPay quantity =
+        match addTaxes with
+        | Some x -> x * quantity
+        | None -> 0
              
-             let amountToPay quantity =
-               addTaxes
-               |> Option.fold (fun x -> x * quantity) 0
-               //Or with partial application of (*)
-               //|> Option.fold ((*) quantity) 0
-             ```-->
+    let amountToPay quantity =
+        addTaxes
+        |> Option.fold (fun x -> x * quantity) 0
+        // Or
+        //|> Option.fold ((*) quantity) 0
+
+
+***
+
 
 <!--
  
@@ -993,7 +1040,7 @@ Using `bind`
            aCustomer.GreetPerson "Joe"
            ```
            
-       - Curried vs Tuple
+       - Curried vs Tupled
            ```fsharp
            type CurriedVsTuple() =
              member this.CurriedAdd x y =
@@ -1037,6 +1084,7 @@ Using `bind`
              new() = 
                  ASquare(length,"NoName") 
            ```
+        ' No redundancy: No need to rename a constructor when renaming a class name
                  
        - Static
          - Members
