@@ -937,108 +937,348 @@ Using `Option.fold`
         //|> Option.fold ((*) quantity) 0
 
 
+
+---
+
+#### 7.7. Classes
+
+
+F# is also Object Oriented programming language.
+
+It allows to define classes, interfaces and methods.
+
+' So far we have seen immutable data types that support structural equality. 
+' This is required to support Functional Programming paradigm.
+
+
+---
+
+    [fsharp]
+    type CustomerName(firstName, middleInitial, lastName) =
+      member this.FirstName = firstName
+      member this.MiddleInitial = middleInitial
+      member this.LastName = lastName 
+
+' Note that no type annotations on constructor's arguments is needed
+' They will be inferred as `object`
+' The language infers the member types based on their return type
+
+---
+    
+    [fsharp]
+    type CustomerName(firstName:string, 
+                      middleInitial:string option, 
+                      lastName:string) =
+      member __.FirstName = firstName
+      member __.MiddleInitial = middleInitial
+      member __.LastName = lastName
+
+' `this` can be any identifier, just needs to be consistent
+
+---
+    
+    [fsharp]
+    type CustomerName(firstName:string, 
+                      middleNames:(string * string) option, 
+                      lastName:string) =
+      member __.FirstName = firstName
+      member __.MiddleNames = middleNames
+      member __.LastName = lastName
+
+
+
+---
+
+##### Type signature
+
+
+Given:
+
+    [fsharp]
+    type CustomerName(firstName:string, 
+                      middleNames:(string * string) option, 
+                      lastName:string) =
+      member __.FirstName = firstName
+      member __.MiddleNames = middleNames
+      member __.LastName = lastName
+
+
+Its type signature is:
+
+    [fsharp]
+    type CustomerName =
+      class
+        new : firstName:string * middleNames:(string * string) option *
+              lastName:string -> CustomerName
+        member FirstName : string
+        member LastName : string
+        member MiddleNames : (string * string) option
+      end
+
+
+' Notice the inferred member types
+
+
+---
+
+
+---
+
+##### "private" fields and functions
+
+
+    [fsharp]
+    type Square(length:int, name:string) =
+
+      let mutable mutableColor = "red"          // private mutable value
+      let scaleUp scale = length * scale        // private function
+
+      member this.Area = length * length
+      member this.Rotate angle times = angle * times
+      member this.ScaleUp scale = scaleUp scale  // public function
+      member this.SetMutableColor color =        // public wrapper for mutable value
+        mutableColor <- color
+      
+usage:
+
+    [fsharp]
+    let aSquare = new Square(32, "Squarito")
+    printf "My size would be %d when doubled"  (aSquare.ScaleUp 2)
+    aSquare.SetMutableColor "purple"
+
+
+
+---
+
+
+##### Primary constructor
+
+
+    [fsharp]
+    type CustomerName(firstName, middleInitial, lastName) =
+      member this.FirstName = firstName
+      member this.MiddleInitial = middleInitial
+      member this.LastName = lastName 
+
+---
+
+
+##### Secondary constructors
+
+
+    [fsharp]
+    type ASquare(length:int, name:string) = 
+      new(length) = 
+          ASquare(length,"NoName") 
+      new() = 
+          ASquare(1,"NoName") 
+
+
+' No redundancy: No need to rename a constructor when renaming a class name
+
+
+---
+
+##### Mutable private fields
+
+    [fsharp]
+    type AMutableSquare(length:int, name:string) =
+      
+      let mutable mutableLength = length
+  
+      member this.SetLength length =
+        mutableLength <- length
+
+---
+
+
+##### Constructor behaviour
+
+       
+    [fsharp]
+    type ASquare(length:int, name:string) as this =
+
+      let mutable mutableColor = "red" 
+
+      do printfn "My name is %s and my color is %s" name color     // good
+      do this.PrintMyArea()                                        // not recomended
+      
+      member this.Area = length * length
+      
+      member this.PrintMyArea() =
+        do printfn "My area is %d" this.Area 
+    
+' `this` needed to call `PrintMyArea()`
+
+
+---
+
+
+
+
+##### Methods
+
+    [fsharp]
+    type CustomerName(firstName:string, 
+                      middleInitial:string, 
+                      lastName:string) =
+        member this.FirstName = firstName
+        member this.MiddleInitial = middleInitial
+        member this.LastName = lastName
+
+        member this.PrintName() =
+            sprintf "My name is %s %s %s" 
+                        this.FirstName  
+                        this.MiddleInitial this.LastName
+
+        member this.GreetPerson nameOfPerson =
+            printfn "Hello %s. %s" nameOfPerson (this.PrintName())
+
+    let aCustomer = CustomerName("Bob", "A", "Bobson")
+    aCustomer.GreetPerson "Joe"
+
+'  Note  that `new` keyword is not needed.
+
+
+---
+
+
+
+#### 7.9. Interfaces
+
+
+---
+
+##### Definition
+
+
+    [fsharp]
+    type IMyInterface =
+      abstract member Add: int -> int -> int
+      abstract member Pi : float
+      abstract member SideLength : float with get,set
+
+
+' Whats the difference between interfaces and abstract  classes?
+
+
+---
+
+##### Implementation
+
+
+    [fsharp]
+    type IAddTaxes =
+      abstract member AddTaxes: decimal -> decimal -> decimal
+    
+    type TaxableItem() =
+      interface IAddTaxes with 
+          member this.AddTaxes cost tax = 
+              cost + (cost * tax)
+    
+      interface System.IDisposable with 
+          member this.Dispose() = 
+              printfn "disposed"
+    
+
+---
+
+
+
+##### Usage
+
+
+        
+        [fsharp]
+        let aPhone = TaxableItem()
+        let phoneTaxer = aPhone :> IAddTaxes
+        phoneTaxer.AddTaxes 10.10 0.15
+    
+        let addTaxesService (taxer:IAddTaxes) =
+          printfn "The total cost is %d" <| taxes.AddTaxes 10.10  0.15
+        addTaxesServices aPhone
+
+
+'  :> upcasting in F# is explicit
+
+
+
+---
+
+#### 8. Expressions vs statements
+
+
+---
+
+
+_statement_ - a command that performs some action and usually changes the state or transfers the control flow, e.g. `return` statement
+
+_expression_ - a computation that can be evaluated and yields a result.
+
+
+' p.328
+
+---
+
+
+A fundamental building block of F# programs is an _expression_. 
+Entire F# program is a composite expression that returns a value.
+Every function returns a value, including impure functions performing only a side-effect, e.g:
+
+
+    [fsharp]
+    let res =
+      if isNewYear then
+          printfn "Launching fireworks..."
+
+
+    evaluates to:
+
+    [fsharp]
+    Launching fireworks...
+    val res : unit = ()
+
+
+' The `()` is (the only possible) value of type `Unit`. It is used for representing lack of information and in practice it indicates that the expression (or function) performs a side-effect.
+
+' The `if` statement is also an expression. Here it returns a value of type `Unit`. As no `else` clause is provided, the expression in `then` has to be of type `Unit`
+
+
+---
+
+##### Sequencing expressions
+
+
+
+    [fsharp]
+    let res =
+      printf "Provisioning a toster ..."
+      70150
+
+    let res = 
+      printf "Provisioning a toster ..." ; 70150
+
+' Expressions that evaluate to unit `()` can be chained together placing them in a new line (preserving the same indentation) or using `;` operator.
+' The `;` ignores the expression on the left, evaluates the expression on the right and returns its value.
+' The below examples are equivalent. The `res` evaluates to `70150`
+' The first example looks like it contains a code block, but internally it is two expressions that are sequentially composed using `;`.
+' Every expressions that is not used, passed to or returned from a function, generates a compiler warnings.
+' To explicitly ignore use the `ignore: a' -> unit` function.
+
+
+
 ***
 
 
-<!--
- 
+
+
+
+<!-- 
+
+
     7. Classes
-       - They always have parantheses after the class name.
-       - Must have functions attached to them as members.
-         ```fsharp
-         type CustomerName(firstName, middleInitial, lastName) =    //Note that no parameters type is needed
-           member this.FirstName = firstName           //`this` could  be any identifier you want. Just needs to be consistent
-           member this.MiddleInitial = middleInitial
-           member this.LastName = lastName 
-         ```
-         ```fsharp
-         type CustomerName(firstName:string, middleInitial:string  option, lastName:string) =
-           member this.FirstName = firstName
-           member this.MiddleInitial = middleInitial
-           member this.LastName = lastName
-         ```
-         ```fsharp
-         type CustomerName(firstName:string, middleNames:(string *  string) option, lastName:string) =
-           member this.FirstName = firstName
-           member this.MiddleNames = middleNames
-           member this.LastName = lastName
-         ```
-           
-       - Signature
-         - Given:
-           ```fsharp
-           type ASquare(length:int, name:string) = 
-             member this.Area = length * length
-             member this.Rotate angle times = angle * times
-           ```
-         - Its signature would be:
-           ```fsharp
-           type ASquare =
-             class
-               new : length:int * name:string -> ASquare        //constructor signature. Always called `new`
-               member Area : int                                //property signature
-               member Rotate : angle:int -> times:int -> int    //method signature
-             end
-           ```
-       - Optional private fields and functions.
-           ```fsharp
-           type ASquare(length:int, name:string) =
-             let mutable mutableColor = "red"                  //private mutable value
-             let scaleUp scale = length * scale                //private function
-             member this.Area = length * length
-             member this.Rotate angle times = angle * times
-             
-             member this.ScaleUp scale = scaleUp scale          //public function
-             member this.SetMutableColor color =                //public wrapper for mutable value
-               mutableColor <- color
-             
-           let aSquareInstance = new ASquare(32, "Squarito")
-           printf "My size would be %d when doubled"  (aSquaritoInstance.ScaleUp 2)
-           aSquaritoInstance.SetMutableColor "purple"
-           ```
-           
-       - Mutable constructor parameters
-           ```fsharp
-           type AMutableSquare(length:int, name:string) =
-             let mutable mutableLength = length
-             
-             member this.SetLength length =
-               mutableLength <- length
-           ```
-               
-       - Extra constructor behaviour
-           ```fsharp
-           type ASquare(length:int, name:string) as this =                //Note the `this`, only needed for `PrintMyArea`
-             let mutable mutableColor = "red" 
-             do printfn "My name is %s and my color is %s" name color     //This is a good way of extra behaviour
-             do this.PrintMyArea()                                        //This is not that good
-             
-             member this.Area = length * length
-             
-             member this.PrintMyArea() =
-               do printfn "My area is %d" this.Area 
-           
-           new ASquare(65, "Your name")
-           ```
-           
-       - Methods
-           ```fsharp
-           type CustomerName(firstName, middleInitial, lastName) =
-             member this.FirstName = firstName
-             member this.MiddleInitial = middleInitial
-             member this.LastName = lastName  
-             
-             // Parameterless method. Notice the parenthesis.
-             method this.PrintName() =
-               printfn "My name is %s %s %s" this.FirstName  this.MiddleInitial this.LastName
-             
-             // Parameter method
-             method this.GreetPerson nameOfPerson =
-               printfn "Hello %s. %s" nameOfPerson this.PrintName
-               
-           let aCustomer = ACustomer("Bob", "A", "Bobson")    //Note  that `new` is not needed.
-           aCustomer.GreetPerson "Joe"
-           ```
+       
+
            
        - Curried vs Tupled
            ```fsharp
@@ -1076,15 +1316,7 @@ Using `Option.fold`
              member val Color = "Red" with get, set
            ```
              
-       - Secondary constructors
-           ```fsharp
-           type ASquare(length, name) = 
-             new(length) = 
-                 ASquare(length,"NoName") 
-             new() = 
-                 ASquare(length,"NoName") 
-           ```
-        ' No redundancy: No need to rename a constructor when renaming a class name
+
                  
        - Static
          - Members
@@ -1184,52 +1416,11 @@ Using `Option.fold`
              inherit Phone() 
              override this.Cost() = base.Cost() * 3
            ```
-    
-    9. Interfaces
-       - Syntax
-           ```fsharp
-           type MyInterface =
-             abstract member Add: int -> int -> int
-             abstract member Pi : float
-             abstract member SideLength : float with get,set
-           ```
-         - Whats the difference between interfaces and abstract  classes?
- 
-       - Implementation
-           ```fsharp
-           type IAddTaxes =
-             abstract member AddTaxes: decimalt -> decimal -> decimal
- 
-           type TaxableItem() =
-             interface IAddTaxes with 
-                 member this.AddTaxes cost tax = 
-                     cost + (cost * tax)
- 
-             interface System.IDisposable with 
-                 member this.Dispose() = 
-                     printfn "disposed"
-           ```
- 
-       - Usage
-         - The class must be casted to the interface in order to use  its method.
-           ```fsharp
-           let aPhone = TaxableItem()
-           let phoneTaxer = aPhone :> IAddTaxes      //:> means casting
-           phoneTaxer.AddTaxes 10.10 0.15
-           ```
-    
-           ```fsharp
-           let addTaxesService (taxer:IAddTaxes) =
-             printfn "The total cost is %d" <| taxes.AddTaxes 10.10  0.15
-           addTaxesServices aPhone
-           ```
-    
-    
----
+
 
 ### 8. Expressions vs statements
     
-    - _statement_ - a command that performs some action and usually changes the state  or transfers the control flow, e.g. `return` statement _p.328
+    - _statement_ - a command that performs some action and usually changes the state or transfers the control flow, e.g. `return` statement _p.328
     - _expression_ - a computation that can be evaluated and yields a result.
 
     A fundamental building block of F# programs is an _expression_. Entire F# program is a composite expression that returns a value.
