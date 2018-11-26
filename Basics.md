@@ -419,7 +419,7 @@
        - Deconstruction with *match*
         ```fsharp
         let intOrBool x =
-          match x wtih
+          match x with
           | Integer i -> printfn "This is an int! %i" i
           | Boolean b -> printfn "This is a bool! %A" b
           
@@ -531,7 +531,28 @@
                aCost
                |> Option.map (fun c -> c + c * aTax)
              ```
-           
+         - `bind`
+            - If the input parameter is `None`, then don't call the next function.
+            - If it is `Some`, then call the next function, passing the contents of the `Some`.
+             ```fsharp
+             type PaymentMethod = PaymentMethod of int
+             let parsePositiveFirst3Int str = 
+               match str with
+               | "1" -> Some 1
+               | "2" -> Some 2
+               | "3" -> Some 3
+               | _ -> None
+             let toPaymentMethod pm = 
+               if pm >= 1 then 
+                 Some (PaymentMethod pm)
+               else
+                 None
+             let parseToPaymentMethod str =
+               parsePositiveFirst3Int str
+               |> Option.bind toPaymentMethod
+             ```
+             - Whats the signature of `parseToPaymentMethod`?
+
          - `fold`
              ```fsharp
              let amountToPay quantity =
@@ -644,7 +665,7 @@
            aCustomer.GreetPerson "Joe"
            ```
            
-       - Curried vs Tuple
+       - Curried vs Tupled
            ```fsharp
            type CurriedVsTuple() =
              member this.CurriedAdd x y =
@@ -801,7 +822,7 @@
        - Implementation
            ```fsharp
            type IAddTaxes =
-             abstract member AddTaxes: decimalt -> decimal -> decimal
+             abstract member AddTaxes: decimal -> decimal -> decimal
  
            type TaxableItem() =
              interface IAddTaxes with 

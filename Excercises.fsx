@@ -23,6 +23,7 @@ Operators
  f4: ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list
 *)
 
+// printfn "Hola %s" "name"
 
 // 1. Create a "Hello world" function that introduces yourself. Where yourself is a parameter
 //    And run it
@@ -45,7 +46,7 @@ Operators
 //    Create a function for construction and one for deconstruction.
 
 
-// 6. Add a discrimanted union to your model. i.e. customer type, contact mode, etc.
+// 6. Add a discrimated union to your model. i.e. customer type, contact mode, etc.
 //    Update its construction and deconstruction functions.
 
 
@@ -61,7 +62,7 @@ Operators
 
 // 9. Create a type for payment methods, and one type for payment.
 //    Create a "pay" function that takes a payment and decides how to process it.
-(* The payment taking system should accept the followinhg payment methods
+(* The payment taking system should accept the following payment methods
 * Cash
 * Credit cards
 * Cheques
@@ -95,3 +96,23 @@ After designing the types, define the types of functions that will:
 
 // 11. Create an active pattern for odds and even
 //     Create a function isDivisibleByTwo function that uses pattern matching to decide.
+
+
+// 12. Given the following functions, process the workflows in serial and parallel:
+(*
+let urlList = [ "Yahoo", "http://www.yahoo.com/"
+                "Google", "http://www.google.com/"
+                "Bing", "http://www.bing.com"
+              ]
+
+let fetchAsync(name, url:string) =
+    async {
+        try
+            let uri = new System.Uri(url)
+            let webClient = new WebClient()
+            let! html = webClient.AsyncDownloadString(uri)
+            printfn "Read %d characters for %s" html.Length name
+        with
+            | ex -> printfn "%s" (ex.Message);
+    }
+*)  
